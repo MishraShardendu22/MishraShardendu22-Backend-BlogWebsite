@@ -1,0 +1,41 @@
+{
+  "name": "mishrashardendu22-blog-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Express backend for MishraShardendu22 Blog",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:migrate": "drizzle-kit migrate"
+  },
+  "keywords": [
+    "blog",
+    "express",
+    "typescript",
+    "drizzle",
+    "better-auth"
+  ],
+  "author": "Shardendu Mishra <mishrashardendu22@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
+    "better-auth": "^1.3.27",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.44.6",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.5",
+    "drizzle-kit": "^0.30.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
