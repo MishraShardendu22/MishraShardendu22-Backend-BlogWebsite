@@ -35,15 +35,6 @@ app.use('/api/blogs', blogRoutes)
 
 app.use(errorHandler)
 app.use(notFoundHandler)
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`Blog Backend API running on http://localhost:${PORT}`)
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`)
-  console.log(`CORS enabled for: ${FRONTEND_URL}`)
-  console.log(`Blog Backend API running on http://localhost:${PORT}`)
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`)
-  console.log(`CORS enabled for: ${FRONTEND_URL}`)
-})
+app.listen(PORT)
 
 export default app
