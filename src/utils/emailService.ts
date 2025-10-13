@@ -12,17 +12,19 @@ export const sendOTPEmail = async ({ to_email, to_name, otp }: SendEmailParams):
     console.log('[EMAIL] Initializing email transporter...')
 
     // Validate required environment variables
-    if (!process.env.MAIL_ID || !process.env.MAIL_PASS) {
-      console.error('[EMAIL] Missing MAIL_ID or MAIL_PASS environment variables')
+    if (!process.env.MAIL_ID || !process.env.SENDGRID_API_KEY) {
+      console.error('[EMAIL] Missing MAIL_ID or SENDGRID_API_KEY environment variables')
       return false
     }
 
-    // Nodemailer transporter setup
+    // Nodemailer transporter setup with SendGrid SMTP
     const transporter = createTransport({
-      service: 'gmail',
+      host: 'smtp.sendgrid.net',
+      port: 587,
+      secure: false, // true for 465, false for other ports
       auth: {
-        user: process.env.MAIL_ID,
-        pass: process.env.MAIL_PASS,
+        user: 'apikey',
+        pass: process.env.SENDGRID_API_KEY,
       },
     })
 

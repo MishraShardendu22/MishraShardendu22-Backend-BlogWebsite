@@ -36,9 +36,9 @@ Create a `.env` file in the root directory:
 # Database
 DATABASE_URL="postgresql://user:password@host/database?sslmode=require"
 
-# Email Configuration (Gmail)
-MAIL_ID="your-email@gmail.com"
-MAIL_PASS="your-app-specific-password"
+# Email Configuration (SendGrid)
+MAIL_ID="your-verified-sender-email@example.com"
+SENDGRID_API_KEY="your-sendgrid-api-key"
 
 # JWT Secret (change this in production!)
 JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
@@ -56,13 +56,19 @@ PORT=3000
 OTP_EXPIRY_MINUTES=10
 ```
 
-### Setting Up Gmail App Password
+### Setting Up SendGrid Email
 
-1. Go to Google Account settings
-2. Enable 2-Factor Authentication
-3. Go to Security → App Passwords
-4. Generate a new App Password for "Mail"
-5. Use this password in `MAIL_PASS`
+1. Sign up for a free SendGrid account at [https://sendgrid.com](https://sendgrid.com)
+2. Create an API key in the SendGrid dashboard
+3. Verify your sender email address in SendGrid
+4. Use the API key in `SENDGRID_API_KEY`
+5. Use your verified sender email in `MAIL_ID`
+
+**SendGrid SMTP Configuration:**
+- Server: `smtp.sendgrid.net`
+- Port: `587` (TLS) or `465` (SSL)
+- Username: `apikey`
+- Password: Your SendGrid API Key
 
 ## Installation
 
@@ -524,10 +530,11 @@ Complete Postman collection and testing documentation is provided!
 ## Troubleshooting
 
 ### Email Not Sending
-1. Check Gmail App Password is correct
-2. Verify 2FA is enabled on Google account
-3. Check `MAIL_ID` and `MAIL_PASS` in `.env`
+1. Check SendGrid API key is correct
+2. Verify your sender email is verified in SendGrid
+3. Check `MAIL_ID` and `SENDGRID_API_KEY` in `.env`
 4. Review console logs for email errors
+5. Ensure SendGrid account is active and not suspended
 
 ### Database Connection Issues
 1. Verify `DATABASE_URL` is correct
