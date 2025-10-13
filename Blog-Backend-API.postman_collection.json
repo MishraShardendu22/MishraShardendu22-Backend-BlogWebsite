@@ -1,0 +1,706 @@
+{
+	"info": {
+		"_postman_id": "blog-backend-api-collection",
+		"name": "Blog Backend API",
+		"description": "Complete API collection for Blog Backend with authentication, blogs, comments, and stats",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/health",
+					"host": ["{{BASE_URL}}"],
+					"path": ["health"]
+				},
+				"description": "Check if the API server is running"
+			},
+			"response": []
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.success && response.data.token) {",
+									"        pm.environment.set('AUTH_TOKEN', response.data.token);",
+									"        pm.environment.set('USER_EMAIL', response.data.user.email);",
+									"        pm.environment.set('USER_ID', response.data.user.id);",
+									"    }",
+									"}",
+									"",
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Response has success property', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('success');",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response contains token and user data', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('token');",
+									"    pm.expect(jsonData.data).to.have.property('user');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"TestPassword123!\",\n  \"name\": \"Test User\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/auth/register",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "auth", "register"]
+						},
+						"description": "Register a new user. Returns a token and sends OTP email for verification."
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.success && response.data.token) {",
+									"        pm.environment.set('AUTH_TOKEN', response.data.token);",
+									"        pm.environment.set('USER_EMAIL', response.data.user.email);",
+									"        pm.environment.set('USER_ID', response.data.user.id);",
+									"    }",
+									"}",
+									"",
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has token', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('token');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"TestPassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/auth/login",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "auth", "login"]
+						},
+						"description": "Login with existing credentials. Returns JWT token."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response contains user data', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('user');",
+									"    pm.expect(jsonData.data.user).to.have.property('email');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{AUTH_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/api/auth/me",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "auth", "me"]
+						},
+						"description": "Get current authenticated user information"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify OTP",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('User is verified', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.user.isVerified).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"test@example.com\",\n  \"otp\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/auth/verify-otp",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "auth", "verify-otp"]
+						},
+						"description": "Verify user email with OTP code sent via email"
+					},
+					"response": []
+				},
+				{
+					"name": "Resend OTP",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('OTP resent successfully', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"test@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/auth/resend-otp",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "auth", "resend-otp"]
+						},
+						"description": "Resend OTP verification code to user's email"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Blogs",
+			"item": [
+				{
+					"name": "Get All Blogs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response is an array', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"});",
+									"",
+									"if (pm.response.json().data.length > 0) {",
+									"    pm.environment.set('BLOG_ID', pm.response.json().data[0].id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/blogs",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "blogs"]
+						},
+						"description": "Get all published blogs (public endpoint)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blog Stats",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has stats', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('totalBlogs');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/blogs/stats",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "blogs", "stats"]
+						},
+						"description": "Get blog statistics (total blogs, comments, etc.)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blog by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has blog data', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('id');",
+									"    pm.expect(jsonData.data).to.have.property('title');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/blogs/{{BLOG_ID}}",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "blogs", "{{BLOG_ID}}"]
+						},
+						"description": "Get a specific blog by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Blog (Owner Only)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.environment.set('BLOG_ID', response.data.id);",
+									"    }",
+									"}",
+									"",
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Blog created successfully', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('id');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{AUTH_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"My First Blog Post\",\n  \"content\": \"This is the content of my first blog post. It contains interesting information about web development.\",\n  \"summary\": \"A brief introduction to web development\",\n  \"tags\": [\"web\", \"development\", \"tutorial\"],\n  \"published\": true\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/blogs",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "blogs"]
+						},
+						"description": "Create a new blog post (requires owner authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Blog (Owner Only)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Blog updated successfully', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('id');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{AUTH_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"My Updated Blog Post\",\n  \"content\": \"This is the updated content with new information.\",\n  \"summary\": \"An updated introduction to web development\",\n  \"tags\": [\"web\", \"development\", \"tutorial\", \"updated\"],\n  \"published\": true\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/blogs/{{BLOG_ID}}",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "blogs", "{{BLOG_ID}}"]
+						},
+						"description": "Update an existing blog post (requires owner authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Partial Update Blog (Owner Only)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{AUTH_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"published\": false\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/blogs/{{BLOG_ID}}",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "blogs", "{{BLOG_ID}}"]
+						},
+						"description": "Partially update a blog post (requires owner authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Blog (Owner Only)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Blog deleted successfully', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{AUTH_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/api/blogs/{{BLOG_ID}}",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "blogs", "{{BLOG_ID}}"]
+						},
+						"description": "Delete a blog post (requires owner authentication)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Comments",
+			"item": [
+				{
+					"name": "Get Comments by Blog ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response is an array', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"});",
+									"",
+									"if (pm.response.json().data.length > 0) {",
+									"    pm.environment.set('COMMENT_ID', pm.response.json().data[0].id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/blogs/{{BLOG_ID}}/comments",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "blogs", "{{BLOG_ID}}", "comments"]
+						},
+						"description": "Get all comments for a specific blog"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.environment.set('COMMENT_ID', response.data.id);",
+									"    }",
+									"}",
+									"",
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Comment created successfully', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('id');",
+									"    pm.expect(jsonData.data).to.have.property('content');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{AUTH_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"content\": \"This is a great blog post! Thanks for sharing.\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/blogs/{{BLOG_ID}}/comments",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "blogs", "{{BLOG_ID}}", "comments"]
+						},
+						"description": "Create a new comment on a blog post (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Comment deleted successfully', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{AUTH_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/api/blogs/{{BLOG_ID}}/comments/{{COMMENT_ID}}",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "blogs", "{{BLOG_ID}}", "comments", "{{COMMENT_ID}}"]
+						},
+						"description": "Delete a comment (requires authentication - can only delete own comments or owner can delete any)"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "AUTH_TOKEN",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "USER_EMAIL",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "USER_ID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "BLOG_ID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "COMMENT_ID",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

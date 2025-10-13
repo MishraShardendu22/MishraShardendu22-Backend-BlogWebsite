@@ -496,6 +496,31 @@ pnpm db:studio
 - **Render** - Full-stack deployment
 - **AWS/GCP/Azure** - Traditional cloud deployment
 
+## 🧪 API Testing
+
+Complete Postman collection and testing documentation is provided! 
+
+### Quick Start
+1. Import `Blog-Backend-API.postman_collection.json` into Postman
+2. Import `Blog-Backend-API.postman_environment.json` for environment variables
+3. Start testing with automated tests and auto-saved tokens!
+
+### Documentation Files
+- **`TESTING_README.md`** - Complete overview of all testing resources
+- **`POSTMAN_TESTING_GUIDE.md`** - Step-by-step Postman testing guide
+- **`API_QUICK_REFERENCE.md`** - Quick reference for all endpoints
+- **`API_VISUAL_GUIDE.md`** - Visual diagrams and flow charts
+- **`NEWMAN_TESTING_GUIDE.md`** - CLI testing and CI/CD integration
+
+### Features
+✅ All endpoints covered (Auth, Blogs, Comments, Stats)  
+✅ Automated tests for each request  
+✅ Auto-save tokens and IDs  
+✅ Sample payloads included  
+✅ Newman CLI support for automation  
+
+📖 **Get Started**: See `TESTING_README.md` for complete testing documentation!
+
 ## Troubleshooting
 
 ### Email Not Sending
