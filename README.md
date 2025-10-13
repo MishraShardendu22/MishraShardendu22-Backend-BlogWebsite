@@ -59,16 +59,12 @@ OTP_EXPIRY_MINUTES=10
 ### Setting Up SendGrid Email
 
 1. Sign up for a free SendGrid account at [https://sendgrid.com](https://sendgrid.com)
-2. Create an API key in the SendGrid dashboard
-3. Verify your sender email address in SendGrid
-4. Use the API key in `SENDGRID_API_KEY`
+2. Create an API key in the SendGrid dashboard (Settings → API Keys → Create API Key)
+3. Verify your sender email address in SendGrid (Settings → Sender Authentication → Verify a Single Sender)
+4. Copy your API key to `SENDGRID_API_KEY` in your `.env` file
 5. Use your verified sender email in `MAIL_ID`
 
-**SendGrid SMTP Configuration:**
-- Server: `smtp.sendgrid.net`
-- Port: `587` (TLS) or `465` (SSL)
-- Username: `apikey`
-- Password: Your SendGrid API Key
+**Note:** This project uses the official `@sendgrid/mail` library for better integration and reliability.
 
 ## Installation
 
