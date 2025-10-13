@@ -1,12 +1,9 @@
 import { Request, Response } from 'express'
 import { db } from '../config/database.js'
 import { commentsTable, blogTable, userProfilesTable } from '../models/schema.js'
-import { user as usersTable } from '../models/authSchema.js'
-import { eq, desc, count, and } from 'drizzle-orm'
-/**
- * GET /api/blogs/:id/comments
- * Get all comments for a blog
- */
+import { users as usersTable } from '../models/authSchema.js'
+import { eq, desc, and, count } from 'drizzle-orm'
+
 export async function getCommentsByBlogId(req: Request, res: Response): Promise<void> {
   try {
     const blogId = parseInt(req.params.id)
@@ -32,8 +29,8 @@ export async function getCommentsByBlogId(req: Request, res: Response): Promise<
         user: {
           id: usersTable.id,
           email: usersTable.email,
-          avatar: usersTable.image,
           name: usersTable.name,
+          isVerified: usersTable.isVerified,
         },
         userProfile: {
           firstName: userProfilesTable.firstName,
@@ -69,7 +66,7 @@ export async function getCommentsByBlogId(req: Request, res: Response): Promise<
 }
 /**
  * POST /api/blogs/:id/comments
- * Create a new comment (authenticated users only)
+ * Create a new comment (authenticated and verified users only)
  */
 export async function createComment(req: Request, res: Response): Promise<void> {
   try {
@@ -84,6 +81,23 @@ export async function createComment(req: Request, res: Response): Promise<void> 
       res.status(400).json({ success: false, error: 'Content is required' })
       return
     }
+
+    // Check if user is verified
+    const [userRecord] = await db
+      .select({ isVerified: usersTable.isVerified })
+      .from(usersTable)
+      .where(eq(usersTable.id, user.id))
+      .limit(1)
+
+    if (!userRecord || !userRecord.isVerified) {
+      res.status(403).json({
+        success: false,
+        error: 'Please verify your email to post comments',
+        requiresVerification: true,
+      })
+      return
+    }
+
     const blog = await db.select().from(blogTable).where(eq(blogTable.id, blogId)).limit(1)
     if (blog.length === 0) {
       res.status(404).json({ success: false, error: 'Blog not found' })

@@ -8,18 +8,19 @@ import authRoutes from './routes/auth.js'
 import blogRoutes from './routes/blogs.js'
 
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js'
+import { startCleanupJob } from './utils/scheduledJobs.js'
 
 const app: Express = express()
 const PORT = process.env.PORT || 3000
-const FRONTEND_URLS = (process.env.FRONTEND_URL || '*').split(',');
+const FRONTEND_URLS = (process.env.FRONTEND_URL || '*').split(',')
 
 app.use(
   cors({
     origin: (origin, callback) => {
       if (FRONTEND_URLS.includes('*') || !origin || FRONTEND_URLS.includes(origin)) {
-        callback(null, true);
+        callback(null, true)
       } else {
-        callback(new Error('Not allowed by CORS'));
+        callback(new Error('Not allowed by CORS'))
       }
     },
     credentials: true,
@@ -27,7 +28,7 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
     exposedHeaders: ['Set-Cookie'],
   })
-);
+)
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -41,6 +42,13 @@ app.use('/api/blogs', blogRoutes)
 
 app.use(errorHandler)
 app.use(notFoundHandler)
-app.listen(PORT)
+
+// Start scheduled cleanup job (runs every hour)
+startCleanupJob(60)
+
+app.listen(PORT, () => {
+  console.log(`[SERVER] Blog Backend API is running on port ${PORT}`)
+  console.log(`[SERVER] Environment: ${process.env.NODE_ENV || 'development'}`)
+})
 
 export default app

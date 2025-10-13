@@ -1,12 +1,10 @@
 import { Request, Response } from 'express'
 import { db } from '../config/database.js'
 import { blogTable, userProfilesTable, commentsTable } from '../models/schema.js'
-import { user as usersTable } from '../models/authSchema.js'
+import { users as usersTable } from '../models/authSchema.js'
 import { eq, desc, like, and, or, count, sql } from 'drizzle-orm'
-/**
- * GET /api/blogs
- * Get all blogs with pagination and filters
- */
+
+
 export async function getAllBlogs(req: Request, res: Response): Promise<void> {
   try {
     const page = parseInt(req.query.page as string) || 1
@@ -28,7 +26,10 @@ export async function getAllBlogs(req: Request, res: Response): Promise<void> {
       )
     }
     if (author) {
-      conditions.push(eq(blogTable.authorId, author))
+      const authorId = parseInt(author)
+      if (!isNaN(authorId)) {
+        conditions.push(eq(blogTable.authorId, authorId))
+      }
     }
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined
     const blogs = await db
@@ -43,7 +44,6 @@ export async function getAllBlogs(req: Request, res: Response): Promise<void> {
         author: {
           id: usersTable.id,
           email: usersTable.email,
-          avatar: usersTable.image,
           name: usersTable.name,
         },
         authorProfile: {
@@ -112,7 +112,6 @@ export async function getBlogById(req: Request, res: Response): Promise<void> {
         author: {
           id: usersTable.id,
           email: usersTable.email,
-          avatar: usersTable.image,
           name: usersTable.name,
         },
         authorProfile: {

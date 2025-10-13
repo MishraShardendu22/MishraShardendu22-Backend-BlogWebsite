@@ -1,15 +1,18 @@
 import { Request, Response, NextFunction } from 'express'
 import { db } from '../config/database.js'
-import { session, user } from '../models/authSchema.js'
+import { users } from '../models/authSchema.js'
+import { verifyToken } from '../config/auth.js'
 import { eq } from 'drizzle-orm'
-const OWNER_EMAIL = process.env.OWNER_EMAIL || 'mishrashardendu22@gmail.com'
+
+const OWNER_EMAIL = process.env.OWNER_EMAIL! 
+
 export interface AuthenticatedUser {
-  id: string
+  id: number
   email: string
   name: string
-  image: string | null
   isOwner: boolean
 }
+
 declare global {
   namespace Express {
     interface Request {
@@ -18,50 +21,43 @@ declare global {
   }
 }
 
-function getSessionToken(req: Request): string | null {
-  const cookieHeader = req.headers.cookie
-  if (!cookieHeader) return null
-  const cookies = cookieHeader.split(';').reduce((acc: Record<string, string>, cookie: string) => {
-    const [key, value] = cookie.trim().split('=')
-    acc[key] = value
-    return acc
-  }, {} as Record<string, string>)
-  const sessionCookie = cookies['better-auth.session_token']
-  if (!sessionCookie) return null
-  const baseToken = sessionCookie.split('.')[0]
-  return baseToken
+function getTokenFromHeader(req: Request): string | null {
+  const authHeader = req.headers.authorization
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return null
+  }
+  return authHeader.substring(7)
 }
 
 async function getAuthenticatedUser(req: Request): Promise<AuthenticatedUser | null> {
   try {
-    const token = getSessionToken(req)
+    const token = getTokenFromHeader(req)
     if (!token) return null
-    const [sessionData] = await db
+
+    const payload = verifyToken(token)
+    if (!payload) return null
+
+    // Verify user still exists
+    const [user] = await db
       .select({
-        userId: session.userId,
-        expiresAt: session.expiresAt,
-        email: user.email,
-        name: user.name,
-        image: user.image,
-        id: user.id,
+        id: users.id,
+        email: users.email,
+        name: users.name,
       })
-      .from(session)
-      .innerJoin(user, eq(session.userId, user.id))
-      .where(eq(session.token, token))
+      .from(users)
+      .where(eq(users.id, payload.userId))
       .limit(1)
-    if (!sessionData) return null
-    if (new Date(sessionData.expiresAt) < new Date()) {
-      return null
-    }
+
+    if (!user) return null
+
     return {
-      id: sessionData.id,
-      email: sessionData.email,
-      name: sessionData.name,
-      image: sessionData.image,
-      isOwner: sessionData.email === OWNER_EMAIL,
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      isOwner: user.email === OWNER_EMAIL,
     }
   } catch (error) {
-    console.error('Error verifying session:', error)
+    console.error('Error verifying token:', error)
     return null
   }
 }

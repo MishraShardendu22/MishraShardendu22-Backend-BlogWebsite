@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import { db } from '../config/database.js'
-import { blogTable, userProfilesTable, commentsTable } from '../models/schema.js'
-import { user as usersTable } from '../models/authSchema.js'
-import { eq, count, desc } from 'drizzle-orm'
+import { blogTable, commentsTable, userProfilesTable } from '../models/schema.js'
+import { users as usersTable } from '../models/authSchema.js'
+import { eq, count, desc, sql } from 'drizzle-orm'
 /**
  * GET /api/blogs/stats
  * Get blog statistics for dashboard
@@ -24,7 +24,6 @@ export async function getBlogStats(_req: Request, res: Response): Promise<void> 
         updatedAt: blogTable.updatedAt,
         authorEmail: usersTable.email,
         authorName: usersTable.name,
-        authorImage: usersTable.image,
         firstName: userProfilesTable.firstName,
         lastName: userProfilesTable.lastName,
         avatar: userProfilesTable.avatar,
@@ -56,7 +55,7 @@ export async function getBlogStats(_req: Request, res: Response): Promise<void> 
               post.firstName && post.lastName
                 ? `${post.firstName} ${post.lastName}`
                 : post.authorName || '',
-            avatar: post.avatar || post.authorImage || null,
+            avatar: post.avatar || null,
           },
         }
       })
