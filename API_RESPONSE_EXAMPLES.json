@@ -1,0 +1,924 @@
+{
+  "API_RESPONSE_EXAMPLES": {
+    "description": "Example responses for all API endpoints in the Blog Backend API",
+    "baseUrl": "http://localhost:3000/api",
+    "endpoints": {
+      "AUTH_ENDPOINTS": {
+        "POST /auth/register": {
+          "description": "Register a new user account",
+          "request": {
+            "method": "POST",
+            "url": "/auth/register",
+            "body": {
+              "email": "user@example.com",
+              "password": "SecurePassword123!",
+              "name": "John Doe"
+            }
+          },
+          "responses": {
+            "success_201": {
+              "success": true,
+              "message": "Registration successful. Please verify your email with the OTP sent.",
+              "data": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                "user": {
+                  "id": 1,
+                  "email": "user@example.com",
+                  "name": "John Doe",
+                  "isVerified": false,
+                  "isOwner": false
+                }
+              }
+            },
+            "error_400_missing_fields": {
+              "success": false,
+              "error": "Email, password, and name are required"
+            },
+            "error_400_invalid_email": {
+              "success": false,
+              "error": "Invalid email format"
+            },
+            "error_400_user_exists": {
+              "success": false,
+              "error": "User already exists"
+            },
+            "error_500": {
+              "success": false,
+              "error": "Internal server error"
+            }
+          }
+        },
+        "POST /auth/login": {
+          "description": "Login to an existing account",
+          "request": {
+            "method": "POST",
+            "url": "/auth/login",
+            "body": {
+              "email": "user@example.com",
+              "password": "SecurePassword123!"
+            }
+          },
+          "responses": {
+            "success_200": {
+              "success": true,
+              "data": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                "user": {
+                  "id": 1,
+                  "email": "user@example.com",
+                  "name": "John Doe",
+                  "isVerified": true,
+                  "isOwner": false
+                }
+              }
+            },
+            "error_400": {
+              "success": false,
+              "error": "Email and password are required"
+            },
+            "error_401": {
+              "success": false,
+              "error": "Invalid credentials"
+            },
+            "error_500": {
+              "success": false,
+              "error": "Internal server error"
+            }
+          }
+        },
+        "GET /auth/me": {
+          "description": "Get current authenticated user information",
+          "request": {
+            "method": "GET",
+            "url": "/auth/me",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            }
+          },
+          "responses": {
+            "success_200": {
+              "success": true,
+              "data": {
+                "user": {
+                  "id": 1,
+                  "email": "user@example.com",
+                  "name": "John Doe",
+                  "isVerified": true,
+                  "isOwner": false
+                }
+              }
+            },
+            "error_401_no_token": {
+              "success": false,
+              "error": "No token provided"
+            },
+            "error_401_invalid_token": {
+              "success": false,
+              "error": "Invalid token"
+            },
+            "error_404": {
+              "success": false,
+              "error": "User not found"
+            },
+            "error_500": {
+              "success": false,
+              "error": "Internal server error"
+            }
+          }
+        },
+        "POST /auth/verify-otp": {
+          "description": "Verify user email with OTP",
+          "request": {
+            "method": "POST",
+            "url": "/auth/verify-otp",
+            "body": {
+              "email": "user@example.com",
+              "otp": "123456"
+            }
+          },
+          "responses": {
+            "success_200": {
+              "success": true,
+              "message": "Email verified successfully",
+              "data": {
+                "user": {
+                  "id": 1,
+                  "email": "user@example.com",
+                  "name": "John Doe",
+                  "isVerified": true,
+                  "isOwner": false
+                }
+              }
+            },
+            "error_400_missing_fields": {
+              "success": false,
+              "error": "Email and OTP are required"
+            },
+            "error_400_already_verified": {
+              "success": false,
+              "error": "User already verified"
+            },
+            "error_400_invalid_otp": {
+              "success": false,
+              "error": "Invalid or expired OTP"
+            },
+            "error_404": {
+              "success": false,
+              "error": "User not found"
+            },
+            "error_500": {
+              "success": false,
+              "error": "Internal server error"
+            }
+          }
+        },
+        "POST /auth/resend-otp": {
+          "description": "Resend OTP to user email",
+          "request": {
+            "method": "POST",
+            "url": "/auth/resend-otp",
+            "body": {
+              "email": "user@example.com"
+            }
+          },
+          "responses": {
+            "success_200": {
+              "success": true,
+              "message": "OTP sent successfully"
+            },
+            "error_400_missing_email": {
+              "success": false,
+              "error": "Email is required"
+            },
+            "error_400_already_verified": {
+              "success": false,
+              "error": "User already verified"
+            },
+            "error_404": {
+              "success": false,
+              "error": "User not found"
+            },
+            "error_500_otp_generation": {
+              "success": false,
+              "error": "Failed to generate OTP"
+            },
+            "error_500_email_send": {
+              "success": false,
+              "error": "Failed to send OTP email"
+            },
+            "error_500": {
+              "success": false,
+              "error": "Internal server error"
+            }
+          }
+        }
+      },
+      "BLOG_ENDPOINTS": {
+        "GET /blogs": {
+          "description": "Get all blogs with pagination and optional filters",
+          "request": {
+            "method": "GET",
+            "url": "/blogs?page=1&limit=10&tag=javascript&search=react&author=1"
+          },
+          "responses": {
+            "success_200": {
+              "success": true,
+              "data": [
+                {
+                  "id": 1,
+                  "title": "Introduction to React Hooks",
+                  "content": "React Hooks are a new addition in React 16.8...",
+                  "tags": ["react", "javascript", "hooks"],
+                  "authorId": 1,
+                  "createdAt": "2025-10-14T10:30:00.000Z",
+                  "updatedAt": "2025-10-14T10:30:00.000Z",
+                  "author": {
+                    "id": 1,
+                    "email": "owner@example.com",
+                    "name": "Jane Smith"
+                  },
+                  "authorProfile": {
+                    "firstName": "Jane",
+                    "lastName": "Smith",
+                    "avatar": "https://example.com/avatars/jane.jpg"
+                  },
+                  "comments": 15
+                },
+                {
+                  "id": 2,
+                  "title": "Understanding TypeScript Generics",
+                  "content": "TypeScript generics provide a way to make components work...",
+                  "tags": ["typescript", "javascript"],
+                  "authorId": 1,
+                  "createdAt": "2025-10-13T14:20:00.000Z",
+                  "updatedAt": "2025-10-13T14:20:00.000Z",
+                  "author": {
+                    "id": 1,
+                    "email": "owner@example.com",
+                    "name": "Jane Smith"
+                  },
+                  "authorProfile": {
+                    "firstName": "Jane",
+                    "lastName": "Smith",
+                    "avatar": "https://example.com/avatars/jane.jpg"
+                  },
+                  "comments": 8
+                }
+              ],
+              "pagination": {
+                "page": 1,
+                "limit": 10,
+                "total": 25,
+                "totalPages": 3
+              }
+            },
+            "error_500": {
+              "success": false,
+              "error": "Failed to fetch blogs"
+            }
+          }
+        },
+        "GET /blogs/:id": {
+          "description": "Get a single blog by ID",
+          "request": {
+            "method": "GET",
+            "url": "/blogs/1"
+          },
+          "responses": {
+            "success_200": {
+              "success": true,
+              "data": {
+                "id": 1,
+                "title": "Introduction to React Hooks",
+                "content": "React Hooks are a new addition in React 16.8 that allow you to use state and other React features without writing a class. They provide a more direct API to the React concepts you already know...",
+                "tags": ["react", "javascript", "hooks"],
+                "authorId": 1,
+                "createdAt": "2025-10-14T10:30:00.000Z",
+                "updatedAt": "2025-10-14T10:30:00.000Z",
+                "author": {
+                  "id": 1,
+                  "email": "owner@example.com",
+                  "name": "Jane Smith"
+                },
+                "authorProfile": {
+                  "firstName": "Jane",
+                  "lastName": "Smith",
+                  "avatar": "https://example.com/avatars/jane.jpg"
+                },
+                "comments": 15
+              }
+            },
+            "error_400": {
+              "success": false,
+              "error": "Invalid blog ID"
+            },
+            "error_404": {
+              "success": false,
+              "error": "Blog not found"
+            },
+            "error_500": {
+              "success": false,
+              "error": "Failed to fetch blog"
+            }
+          }
+        },
+        "POST /blogs": {
+          "description": "Create a new blog (owner only)",
+          "request": {
+            "method": "POST",
+            "url": "/blogs",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            },
+            "body": {
+              "title": "Getting Started with Node.js",
+              "content": "Node.js is a JavaScript runtime built on Chrome's V8 engine...",
+              "tags": ["nodejs", "javascript", "backend"]
+            }
+          },
+          "responses": {
+            "success_201": {
+              "success": true,
+              "data": {
+                "id": 3,
+                "title": "Getting Started with Node.js",
+                "content": "Node.js is a JavaScript runtime built on Chrome's V8 engine...",
+                "tags": ["nodejs", "javascript", "backend"],
+                "authorId": 1,
+                "createdAt": "2025-10-14T15:45:00.000Z",
+                "updatedAt": "2025-10-14T15:45:00.000Z"
+              }
+            },
+            "error_400": {
+              "success": false,
+              "error": "Title and content are required"
+            },
+            "error_401": {
+              "success": false,
+              "error": "Unauthorized"
+            },
+            "error_403": {
+              "success": false,
+              "error": "Forbidden - Owner access required"
+            },
+            "error_500": {
+              "success": false,
+              "error": "Failed to create blog"
+            }
+          }
+        },
+        "PUT /blogs/:id": {
+          "description": "Update an existing blog (owner only)",
+          "request": {
+            "method": "PUT",
+            "url": "/blogs/3",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            },
+            "body": {
+              "title": "Getting Started with Node.js - Updated",
+              "content": "Node.js is a powerful JavaScript runtime...",
+              "tags": ["nodejs", "javascript", "backend", "tutorial"]
+            }
+          },
+          "responses": {
+            "success_200": {
+              "success": true,
+              "data": {
+                "id": 3,
+                "title": "Getting Started with Node.js - Updated",
+                "content": "Node.js is a powerful JavaScript runtime...",
+                "tags": ["nodejs", "javascript", "backend", "tutorial"],
+                "authorId": 1,
+                "createdAt": "2025-10-14T15:45:00.000Z",
+                "updatedAt": "2025-10-14T16:00:00.000Z"
+              }
+            },
+            "error_400": {
+              "success": false,
+              "error": "Invalid blog ID"
+            },
+            "error_401": {
+              "success": false,
+              "error": "Unauthorized"
+            },
+            "error_403": {
+              "success": false,
+              "error": "Forbidden - Owner access required"
+            },
+            "error_404": {
+              "success": false,
+              "error": "Blog not found"
+            },
+            "error_500": {
+              "success": false,
+              "error": "Failed to update blog"
+            }
+          }
+        },
+        "PATCH /blogs/:id": {
+          "description": "Partially update an existing blog (owner only)",
+          "request": {
+            "method": "PATCH",
+            "url": "/blogs/3",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            },
+            "body": {
+              "tags": ["nodejs", "javascript", "backend", "tutorial", "beginner"]
+            }
+          },
+          "responses": {
+            "success_200": {
+              "success": true,
+              "data": {
+                "id": 3,
+                "title": "Getting Started with Node.js - Updated",
+                "content": "Node.js is a powerful JavaScript runtime...",
+                "tags": ["nodejs", "javascript", "backend", "tutorial", "beginner"],
+                "authorId": 1,
+                "createdAt": "2025-10-14T15:45:00.000Z",
+                "updatedAt": "2025-10-14T16:15:00.000Z"
+              }
+            },
+            "error_400": {
+              "success": false,
+              "error": "Invalid blog ID"
+            },
+            "error_401": {
+              "success": false,
+              "error": "Unauthorized"
+            },
+            "error_403": {
+              "success": false,
+              "error": "Forbidden - Owner access required"
+            },
+            "error_404": {
+              "success": false,
+              "error": "Blog not found"
+            },
+            "error_500": {
+              "success": false,
+              "error": "Failed to update blog"
+            }
+          }
+        },
+        "DELETE /blogs/:id": {
+          "description": "Delete a blog (owner only)",
+          "request": {
+            "method": "DELETE",
+            "url": "/blogs/3",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            }
+          },
+          "responses": {
+            "success_200": {
+              "success": true,
+              "message": "Blog deleted successfully"
+            },
+            "error_400": {
+              "success": false,
+              "error": "Invalid blog ID"
+            },
+            "error_401": {
+              "success": false,
+              "error": "Unauthorized"
+            },
+            "error_403": {
+              "success": false,
+              "error": "Forbidden - Owner access required"
+            },
+            "error_404": {
+              "success": false,
+              "error": "Blog not found"
+            },
+            "error_500": {
+              "success": false,
+              "error": "Failed to delete blog"
+            }
+          }
+        }
+      },
+      "COMMENT_ENDPOINTS": {
+        "GET /blogs/:id/comments": {
+          "description": "Get all comments for a specific blog",
+          "request": {
+            "method": "GET",
+            "url": "/blogs/1/comments?page=1&limit=10"
+          },
+          "responses": {
+            "success_200": {
+              "success": true,
+              "data": [
+                {
+                  "id": 1,
+                  "content": "Great article! Really helped me understand React Hooks better.",
+                  "userId": 2,
+                  "blogId": 1,
+                  "createdAt": "2025-10-14T11:00:00.000Z",
+                  "user": {
+                    "id": 2,
+                    "email": "commenter@example.com",
+                    "name": "John Doe",
+                    "isVerified": true
+                  },
+                  "userProfile": {
+                    "firstName": "John",
+                    "lastName": "Doe",
+                    "avatar": "https://example.com/avatars/john.jpg"
+                  }
+                },
+                {
+                  "id": 2,
+                  "content": "Thanks for sharing! Could you also cover useEffect in detail?",
+                  "userId": 3,
+                  "blogId": 1,
+                  "createdAt": "2025-10-14T12:30:00.000Z",
+                  "user": {
+                    "id": 3,
+                    "email": "reader@example.com",
+                    "name": "Alice Johnson",
+                    "isVerified": true
+                  },
+                  "userProfile": {
+                    "firstName": "Alice",
+                    "lastName": "Johnson",
+                    "avatar": null
+                  }
+                }
+              ],
+              "pagination": {
+                "page": 1,
+                "limit": 10,
+                "total": 15,
+                "totalPages": 2
+              }
+            },
+            "error_400": {
+              "success": false,
+              "error": "Invalid blog ID"
+            },
+            "error_404": {
+              "success": false,
+              "error": "Blog not found"
+            },
+            "error_500": {
+              "success": false,
+              "error": "Failed to fetch comments"
+            }
+          }
+        },
+        "POST /blogs/:id/comments": {
+          "description": "Create a new comment on a blog (authenticated and verified users only)",
+          "request": {
+            "method": "POST",
+            "url": "/blogs/1/comments",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            },
+            "body": {
+              "content": "Excellent explanation! Looking forward to more posts."
+            }
+          },
+          "responses": {
+            "success_201": {
+              "success": true,
+              "data": {
+                "id": 16,
+                "content": "Excellent explanation! Looking forward to more posts.",
+                "userId": 2,
+                "blogId": 1,
+                "createdAt": "2025-10-14T16:30:00.000Z"
+              }
+            },
+            "error_400_invalid_id": {
+              "success": false,
+              "error": "Invalid blog ID"
+            },
+            "error_400_no_content": {
+              "success": false,
+              "error": "Content is required"
+            },
+            "error_401": {
+              "success": false,
+              "error": "Unauthorized"
+            },
+            "error_403": {
+              "success": false,
+              "error": "Please verify your email to post comments",
+              "requiresVerification": true
+            },
+            "error_404": {
+              "success": false,
+              "error": "Blog not found"
+            },
+            "error_500": {
+              "success": false,
+              "error": "Failed to create comment"
+            }
+          }
+        },
+        "DELETE /blogs/:id/comments/:commentId": {
+          "description": "Delete a comment (comment author or owner only)",
+          "request": {
+            "method": "DELETE",
+            "url": "/blogs/1/comments/16",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            }
+          },
+          "responses": {
+            "success_200": {
+              "success": true,
+              "message": "Comment deleted successfully"
+            },
+            "error_400": {
+              "success": false,
+              "error": "Invalid blog ID or comment ID"
+            },
+            "error_401": {
+              "success": false,
+              "error": "Unauthorized"
+            },
+            "error_403": {
+              "success": false,
+              "error": "Forbidden - You can only delete your own comments or if you are the blog owner"
+            },
+            "error_404_blog": {
+              "success": false,
+              "error": "Blog not found"
+            },
+            "error_404_comment": {
+              "success": false,
+              "error": "Comment not found"
+            },
+            "error_500": {
+              "success": false,
+              "error": "Failed to delete comment"
+            }
+          }
+        }
+      },
+      "STATS_ENDPOINTS": {
+        "GET /blogs/stats": {
+          "description": "Get blog statistics including total posts, comments, recent posts, and popular tags",
+          "request": {
+            "method": "GET",
+            "url": "/blogs/stats"
+          },
+          "responses": {
+            "success_200": {
+              "success": true,
+              "data": {
+                "totalPosts": 25,
+                "totalComments": 156,
+                "recentPosts": [
+                  {
+                    "id": 1,
+                    "title": "Introduction to React Hooks",
+                    "content": "React Hooks are a new addition in React 16.8...",
+                    "tags": ["react", "javascript", "hooks"],
+                    "authorId": 1,
+                    "createdAt": "2025-10-14T10:30:00.000Z",
+                    "updatedAt": "2025-10-14T10:30:00.000Z",
+                    "comments": 15,
+                    "author": {
+                      "id": 1,
+                      "email": "owner@example.com",
+                      "name": "Jane Smith",
+                      "avatar": "https://example.com/avatars/jane.jpg"
+                    }
+                  },
+                  {
+                    "id": 2,
+                    "title": "Understanding TypeScript Generics",
+                    "content": "TypeScript generics provide a way to make components work...",
+                    "tags": ["typescript", "javascript"],
+                    "authorId": 1,
+                    "createdAt": "2025-10-13T14:20:00.000Z",
+                    "updatedAt": "2025-10-13T14:20:00.000Z",
+                    "comments": 8,
+                    "author": {
+                      "id": 1,
+                      "email": "owner@example.com",
+                      "name": "Jane Smith",
+                      "avatar": "https://example.com/avatars/jane.jpg"
+                    }
+                  },
+                  {
+                    "id": 3,
+                    "title": "Getting Started with Node.js",
+                    "content": "Node.js is a JavaScript runtime built on Chrome's V8 engine...",
+                    "tags": ["nodejs", "javascript", "backend"],
+                    "authorId": 1,
+                    "createdAt": "2025-10-12T09:15:00.000Z",
+                    "updatedAt": "2025-10-12T09:15:00.000Z",
+                    "comments": 12,
+                    "author": {
+                      "id": 1,
+                      "email": "owner@example.com",
+                      "name": "Jane Smith",
+                      "avatar": "https://example.com/avatars/jane.jpg"
+                    }
+                  },
+                  {
+                    "id": 4,
+                    "title": "Database Design Best Practices",
+                    "content": "When designing a database, it's important to follow best practices...",
+                    "tags": ["database", "sql", "design"],
+                    "authorId": 1,
+                    "createdAt": "2025-10-11T16:45:00.000Z",
+                    "updatedAt": "2025-10-11T16:45:00.000Z",
+                    "comments": 20,
+                    "author": {
+                      "id": 1,
+                      "email": "owner@example.com",
+                      "name": "Jane Smith",
+                      "avatar": "https://example.com/avatars/jane.jpg"
+                    }
+                  },
+                  {
+                    "id": 5,
+                    "title": "REST API Design Principles",
+                    "content": "RESTful APIs are the backbone of modern web applications...",
+                    "tags": ["api", "rest", "backend"],
+                    "authorId": 1,
+                    "createdAt": "2025-10-10T13:20:00.000Z",
+                    "updatedAt": "2025-10-10T13:20:00.000Z",
+                    "comments": 18,
+                    "author": {
+                      "id": 1,
+                      "email": "owner@example.com",
+                      "name": "Jane Smith",
+                      "avatar": "https://example.com/avatars/jane.jpg"
+                    }
+                  }
+                ],
+                "popularTags": [
+                  {
+                    "tag": "javascript",
+                    "count": 18
+                  },
+                  {
+                    "tag": "react",
+                    "count": 12
+                  },
+                  {
+                    "tag": "typescript",
+                    "count": 10
+                  },
+                  {
+                    "tag": "nodejs",
+                    "count": 8
+                  },
+                  {
+                    "tag": "backend",
+                    "count": 7
+                  },
+                  {
+                    "tag": "database",
+                    "count": 6
+                  },
+                  {
+                    "tag": "api",
+                    "count": 5
+                  },
+                  {
+                    "tag": "frontend",
+                    "count": 4
+                  },
+                  {
+                    "tag": "tutorial",
+                    "count": 3
+                  },
+                  {
+                    "tag": "beginners",
+                    "count": 2
+                  }
+                ]
+              }
+            },
+            "error_500": {
+              "success": false,
+              "error": "Failed to fetch blog statistics"
+            }
+          }
+        }
+      }
+    },
+    "COMMON_ERROR_RESPONSES": {
+      "description": "Common error responses across all endpoints",
+      "error_401_unauthorized": {
+        "success": false,
+        "error": "Unauthorized"
+      },
+      "error_403_forbidden": {
+        "success": false,
+        "error": "Forbidden"
+      },
+      "error_500_internal": {
+        "success": false,
+        "error": "Internal server error"
+      }
+    },
+    "AUTHENTICATION": {
+      "description": "How to use authentication tokens",
+      "bearer_token": {
+        "header_name": "Authorization",
+        "header_value": "Bearer <token>",
+        "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoidXNlckBleGFtcGxlLmNvbSIsIm5hbWUiOiJKb2huIERvZSIsImlzT3duZXIiOmZhbHNlLCJpYXQiOjE2OTc1NDU2MDAsImV4cCI6MTY5NzYzMjAwMH0.abc123xyz"
+      },
+      "protected_endpoints": [
+        "POST /blogs",
+        "PUT /blogs/:id",
+        "PATCH /blogs/:id",
+        "DELETE /blogs/:id",
+        "POST /blogs/:id/comments",
+        "DELETE /blogs/:id/comments/:commentId",
+        "GET /auth/me"
+      ],
+      "owner_only_endpoints": [
+        "POST /blogs",
+        "PUT /blogs/:id",
+        "PATCH /blogs/:id",
+        "DELETE /blogs/:id"
+      ]
+    },
+    "PAGINATION": {
+      "description": "Pagination parameters and response format",
+      "query_parameters": {
+        "page": {
+          "type": "number",
+          "default": 1,
+          "description": "Page number to fetch"
+        },
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Number of items per page"
+        }
+      },
+      "response_format": {
+        "pagination": {
+          "page": 1,
+          "limit": 10,
+          "total": 25,
+          "totalPages": 3
+        }
+      }
+    },
+    "FILTERING": {
+      "description": "Available filters for GET /blogs endpoint",
+      "filters": {
+        "tag": {
+          "type": "string",
+          "description": "Filter blogs by tag",
+          "example": "?tag=javascript"
+        },
+        "author": {
+          "type": "number",
+          "description": "Filter blogs by author ID",
+          "example": "?author=1"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in blog title and content",
+          "example": "?search=react"
+        }
+      },
+      "combined_example": "?page=1&limit=10&tag=javascript&search=hooks&author=1"
+    },
+    "DATA_TYPES": {
+      "user": {
+        "id": "number",
+        "email": "string",
+        "name": "string",
+        "isVerified": "boolean",
+        "isOwner": "boolean"
+      },
+      "blog": {
+        "id": "number",
+        "title": "string",
+        "content": "string",
+        "tags": "string[]",
+        "authorId": "number",
+        "createdAt": "string (ISO 8601 date)",
+        "updatedAt": "string (ISO 8601 date)",
+        "comments": "number"
+      },
+      "comment": {
+        "id": "number",
+        "content": "string",
+        "userId": "number",
+        "blogId": "number",
+        "createdAt": "string (ISO 8601 date)"
+      },
+      "userProfile": {
+        "firstName": "string | null",
+        "lastName": "string | null",
+        "avatar": "string | null"
+      }
+    }
+  }
+}
