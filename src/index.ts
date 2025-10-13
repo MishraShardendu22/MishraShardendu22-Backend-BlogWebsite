@@ -11,17 +11,23 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler.js'
 
 const app: Express = express()
 const PORT = process.env.PORT || 3000
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:4321'
+const FRONTEND_URLS = (process.env.FRONTEND_URL || '*').split(',');
 
 app.use(
   cors({
-    origin: FRONTEND_URL,
+    origin: (origin, callback) => {
+      if (FRONTEND_URLS.includes('*') || !origin || FRONTEND_URLS.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
     exposedHeaders: ['Set-Cookie'],
   })
-)
+);
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
