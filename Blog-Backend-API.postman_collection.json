@@ -274,6 +274,7 @@
 									"",
 									"if (pm.response.json().data.length > 0) {",
 									"    pm.environment.set('BLOG_ID', pm.response.json().data[0].id);",
+									"    pm.expect(pm.response.json().data[0]).to.have.property('image');",
 									"}"
 								],
 								"type": "text/javascript"
@@ -486,7 +487,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"published\": false\n}"
+							"raw": "{\n  \"published\": false,\n  \"image\": \"https://example.com/optional-image.jpg\"\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/blogs/{{BLOG_ID}}",
