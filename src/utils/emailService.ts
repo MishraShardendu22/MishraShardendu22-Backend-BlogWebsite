@@ -32,6 +32,15 @@ export const sendOTPEmail = async ({ to_email, to_name, otp }: SendEmailParams):
     console.log('[EMAIL] Email sent:', response.statusCode)
     return true
   } catch (error) {
+    // Log detailed SendGrid response when available to aid debugging (403 Forbidden)
+    try {
+      const errAny: any = error
+      if (errAny?.response?.body) {
+        console.error('[EMAIL] SendGrid response body:', JSON.stringify(errAny.response.body, null, 2))
+      }
+    } catch (e) {
+      // ignore
+    }
     console.error('[EMAIL] Error sending email via SendGrid:', error)
     return false
   }
