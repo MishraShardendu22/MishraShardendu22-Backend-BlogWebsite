@@ -14,14 +14,21 @@ const OWNER_EMAIL = process.env.OWNER_EMAIL || 'mishrashardendu22@gmail.com'
 // Register endpoint
 router.post('/register', async (req: Request, res: Response) => {
   try {
-    const { email, password, name } = req.body
+  const { email, password, name } = req.body
 
-    if (!email || !password || !name) {
+  let profileImage = req.body.profileImage
+
+    if (!email || !password || !name ) {
       res.status(400).json({ success: false, error: 'Email, password, and name are required' })
       return
     }
 
-    // Validate email format
+    if (!profileImage) {
+      const seed = Math.random()
+      profileImage = `https://api.dicebear.com/9.x/lorelei/webp?seed=${seed}&flip=true`
+    }
+
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
       res.status(400).json({ success: false, error: 'Invalid email format' })
@@ -50,6 +57,7 @@ router.post('/register', async (req: Request, res: Response) => {
         email,
         password: hashedPassword,
         name,
+        profileImage: profileImage,
         isVerified: false,
       })
       .returning()
