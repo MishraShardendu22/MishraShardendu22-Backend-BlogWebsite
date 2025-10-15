@@ -100,6 +100,7 @@ router.post('/register', async (req: Request, res: Response) => {
           id: newUser.id,
           email: newUser.email,
           name: newUser.name,
+          profileImage: newUser.profileImage || null,
           isVerified: newUser.isVerified,
           isOwner: newUser.email === OWNER_EMAIL,
         },
@@ -123,7 +124,14 @@ router.post('/login', async (req: Request, res: Response) => {
 
     // Find user
     const [user] = await db
-      .select()
+      .select({
+        id: users.id,
+        email: users.email,
+        name: users.name,
+        profileImage: users.profileImage,
+        password: users.password,
+        isVerified: users.isVerified,
+      })
       .from(users)
       .where(eq(users.email, email))
       .limit(1)
@@ -157,6 +165,7 @@ router.post('/login', async (req: Request, res: Response) => {
           id: user.id,
           email: user.email,
           name: user.name,
+          profileImage: user.profileImage,
           isVerified: user.isVerified,
           isOwner: user.email === OWNER_EMAIL,
         },
@@ -193,6 +202,7 @@ router.get('/me', async (req: Request, res: Response) => {
         id: users.id,
         email: users.email,
         name: users.name,
+        profileImage: users.profileImage,
         isVerified: users.isVerified,
       })
       .from(users)
@@ -211,6 +221,7 @@ router.get('/me', async (req: Request, res: Response) => {
           id: user.id,
           email: user.email,
           name: user.name,
+          profileImage: user.profileImage,
           isVerified: user.isVerified,
           isOwner: user.email === OWNER_EMAIL,
         },

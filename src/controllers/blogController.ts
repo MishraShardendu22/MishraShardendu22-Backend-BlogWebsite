@@ -36,6 +36,7 @@ export async function getAllBlogs(req: Request, res: Response): Promise<void> {
       .select({
         id: blogTable.id,
         title: blogTable.title,
+        image: blogTable.image,
         content: blogTable.content,
         tags: blogTable.tags,
         authorId: blogTable.authorId,
@@ -45,6 +46,7 @@ export async function getAllBlogs(req: Request, res: Response): Promise<void> {
           id: usersTable.id,
           email: usersTable.email,
           name: usersTable.name,
+          image: usersTable.profileImage
         },
         authorProfile: {
           firstName: userProfilesTable.firstName,
@@ -104,6 +106,7 @@ export async function getBlogById(req: Request, res: Response): Promise<void> {
       .select({
         id: blogTable.id,
         title: blogTable.title,
+        image: blogTable.image,
         content: blogTable.content,
         tags: blogTable.tags,
         authorId: blogTable.authorId,
@@ -134,6 +137,7 @@ export async function getBlogById(req: Request, res: Response): Promise<void> {
     ])
     const blogWithCounts = {
       ...blog[0],
+      image: blog[0].image,
       comments: commentsCount[0]?.count || 0,
     }
     res.status(200).json({
@@ -155,6 +159,19 @@ export async function createBlog(req: Request, res: Response): Promise<void> {
     const user = req.user!
     if (!title || !content) {
       res.status(400).json({ success: false, error: 'Title and content are required' })
+      return
+    }
+    // Require thumbnail image URL
+    if (!image) {
+      res.status(400).json({ success: false, error: 'Thumbnail image URL (image) is required' })
+      return
+    }
+    // Validate image URL
+    try {
+      // eslint-disable-next-line no-new
+      new URL(image)
+    } catch (err) {
+      res.status(400).json({ success: false, error: 'Invalid image URL' })
       return
     }
     const [newBlog] = await db
@@ -202,6 +219,17 @@ export async function updateBlog(req: Request, res: Response): Promise<void> {
       res.status(404).json({ success: false, error: 'Blog not found' })
       return
     }
+    // If image is provided, validate URL
+    if (image !== undefined && image !== null) {
+      try {
+        // eslint-disable-next-line no-new
+        new URL(image)
+      } catch (err) {
+        res.status(400).json({ success: false, error: 'Invalid image URL' })
+        return
+      }
+    }
+
     const [updatedBlog] = await db
       .update(blogTable)
       .set({

@@ -16,6 +16,7 @@ export async function getBlogStats(_req: Request, res: Response): Promise<void> 
     const recentPostsRaw = await db
       .select({
         id: blogTable.id,
+        image: blogTable.image,
         title: blogTable.title,
         content: blogTable.content,
         tags: blogTable.tags,
@@ -27,6 +28,7 @@ export async function getBlogStats(_req: Request, res: Response): Promise<void> 
         firstName: userProfilesTable.firstName,
         lastName: userProfilesTable.lastName,
         avatar: userProfilesTable.avatar,
+        profileImage: usersTable.profileImage,
       })
       .from(blogTable)
       .leftJoin(usersTable, eq(blogTable.authorId, usersTable.id))
@@ -56,7 +58,9 @@ export async function getBlogStats(_req: Request, res: Response): Promise<void> 
                 ? `${post.firstName} ${post.lastName}`
                 : post.authorName || '',
             avatar: post.avatar || null,
+            profileImage: post.profileImage ,
           },
+          image: post.image,
         }
       })
     )

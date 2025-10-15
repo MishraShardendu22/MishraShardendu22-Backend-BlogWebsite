@@ -31,6 +31,7 @@ export async function getCommentsByBlogId(req: Request, res: Response): Promise<
           email: usersTable.email,
           name: usersTable.name,
           isVerified: usersTable.isVerified,
+          profileImage: usersTable.profileImage,
         },
         userProfile: {
           firstName: userProfilesTable.firstName,
@@ -117,7 +118,20 @@ export async function createComment(req: Request, res: Response): Promise<void> 
         blogId: commentsTable.blogId,
         createdAt: commentsTable.createdAt,
       })
-    res.status(201).json({ success: true, data: newComment })
+    // Fetch user info to include profileImage in the response
+    const [userInfo] = await db
+      .select({ id: usersTable.id, name: usersTable.name, email: usersTable.email, profileImage: usersTable.profileImage })
+      .from(usersTable)
+      .where(eq(usersTable.id, user.id))
+      .limit(1)
+
+    res.status(201).json({
+      success: true,
+      data: {
+        ...newComment,
+        user: userInfo || null,
+      },
+    })
   } catch (error) {
     console.error('Error creating comment:', error)
     res.status(500).json({ success: false, error: 'Failed to create comment' })

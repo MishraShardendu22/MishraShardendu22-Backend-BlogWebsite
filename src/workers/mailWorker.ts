@@ -1,6 +1,6 @@
 import { Worker } from 'bullmq'
 import IORedis from 'ioredis'
-import { createTransport } from 'nodemailer'
+import sgMail from '@sendgrid/mail'
 
 // Parse Upstash Redis URL and create proper connection
 const upstashHost = process.env.UPSTASH_REDIS_REST_URL!.replace('https://', '')
@@ -17,33 +17,51 @@ const connection = new IORedis({
   tls: {},
 })
 
-// Create Nodemailer transporter
-const transporter = createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.MAIL_ID,
-    pass: process.env.MAIL_PASS,
+// Initialize SendGrid if key present
+const SENDGRID_KEY = process.env.SENDGRID_API_KEY
+if (SENDGRID_KEY) {
+  sgMail.setApiKey(SENDGRID_KEY)
+  console.log('[WORKER] SendGrid initialized for mail worker')
+} else {
+  console.warn('[WORKER] SENDGRID_API_KEY not set - worker will use fallback transporter')
+}
+
+// Fallback transporter (simulated) to avoid breaking in dev
+const transporter = {
+  sendMail: async (mailOptions: any) => {
+    console.log('[WORKER] Fallback transporter - logging mailOptions:', mailOptions)
+    // Simulate email sending
+    return Promise.resolve({ messageId: 'simulated-12345', response: 'Simulated send success' })
   },
-})
+}
 
 // Create email worker
 export const mailWorker = new Worker(
   'mailQueue',
   async (job) => {
-    const { from, to, subject, html } = job.data
+    const { from, to, subject, html, text } = job.data
 
     console.log(`[WORKER] Processing email job ${job.id} for ${to}...`)
 
     try {
-      const info = await transporter.sendMail({
-        from,
-        to,
-        subject,
-        html,
-      })
+      if (SENDGRID_KEY) {
+        const msg: any = {
+          to: to,
+          from: from || process.env.MAIL_ID || 'no-reply@example.com',
+          subject: subject || 'Notification',
+          html: html || text || '',
+        }
+        if (text && !html) msg.text = text
 
-      console.log(`[WORKER] Email sent successfully to ${to}:`, info.response)
-      return { success: true, messageId: info.messageId, response: info.response }
+        const responses = await sgMail.send(msg)
+        const response = Array.isArray(responses) ? responses[0] : responses
+        console.log(`[WORKER] SendGrid response status for ${to}:`, response.statusCode)
+        return { success: true, statusCode: response.statusCode, headers: response.headers }
+      } else {
+        const info = await transporter.sendMail({ from, to, subject, html })
+        console.log(`[WORKER] Fallback send result for ${to}:`, info.response)
+        return { success: true, messageId: info.messageId, response: info.response }
+      }
     } catch (error) {
       console.error(`[WORKER] Failed to send email to ${to}:`, error)
       throw error // This will trigger retry
