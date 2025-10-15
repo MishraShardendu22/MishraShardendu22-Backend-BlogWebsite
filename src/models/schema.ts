@@ -6,6 +6,7 @@ export const blogTable = pgTable('blog', {
   tags: text('tags').array(),
   title: varchar('title', { length: 255 }).notNull(),
   content: text('content').notNull(),
+  image: varchar('image', { length: 500 }), // Image URL or path
   authorId: integer('author_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),

@@ -151,7 +151,7 @@ export async function getBlogById(req: Request, res: Response): Promise<void> {
  */
 export async function createBlog(req: Request, res: Response): Promise<void> {
   try {
-    const { title, content, tags } = req.body
+  const { title, content, tags, image } = req.body
     const user = req.user!
     if (!title || !content) {
       res.status(400).json({ success: false, error: 'Title and content are required' })
@@ -163,6 +163,7 @@ export async function createBlog(req: Request, res: Response): Promise<void> {
         title,
         content,
         tags: tags || [],
+        image: image || null,
         authorId: user.id,
       })
       .returning({
@@ -170,6 +171,7 @@ export async function createBlog(req: Request, res: Response): Promise<void> {
         title: blogTable.title,
         content: blogTable.content,
         tags: blogTable.tags,
+        image: blogTable.image,
         authorId: blogTable.authorId,
         createdAt: blogTable.createdAt,
         updatedAt: blogTable.updatedAt,
@@ -190,7 +192,7 @@ export async function createBlog(req: Request, res: Response): Promise<void> {
 export async function updateBlog(req: Request, res: Response): Promise<void> {
   try {
     const blogId = parseInt(req.params.id)
-    const { title, content, tags } = req.body
+  const { title, content, tags, image } = req.body
     if (isNaN(blogId)) {
       res.status(400).json({ success: false, error: 'Invalid blog ID' })
       return
@@ -206,6 +208,7 @@ export async function updateBlog(req: Request, res: Response): Promise<void> {
         title: title || existingBlog[0].title,
         content: content || existingBlog[0].content,
         tags: tags || existingBlog[0].tags,
+        image: image !== undefined ? image : existingBlog[0].image,
         updatedAt: new Date(),
       })
       .where(eq(blogTable.id, blogId))
@@ -214,6 +217,7 @@ export async function updateBlog(req: Request, res: Response): Promise<void> {
         title: blogTable.title,
         content: blogTable.content,
         tags: blogTable.tags,
+        image: blogTable.image,
         authorId: blogTable.authorId,
         createdAt: blogTable.createdAt,
         updatedAt: blogTable.updatedAt,

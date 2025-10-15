@@ -69,7 +69,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"TestPassword123!\",\n  \"name\": \"Test User\"\n}"
+							"raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"TestPassword123!\",\n  \"name\": \"Test User\",\n  \"profileImage\": \"https://example.com/image.jpg\"\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/auth/register",
@@ -399,7 +399,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"title\": \"My First Blog Post\",\n  \"content\": \"This is the content of my first blog post. It contains interesting information about web development.\",\n  \"summary\": \"A brief introduction to web development\",\n  \"tags\": [\"web\", \"development\", \"tutorial\"],\n  \"published\": true\n}"
+							"raw": "{\n  \"title\": \"My First Blog Post\",\n  \"content\": \"This is the content of my first blog post. It contains interesting information about web development.\",\n  \"summary\": \"A brief introduction to web development\",\n  \"tags\": [\"web\", \"development\", \"tutorial\"],\n  \"published\": true,\n  \"image\": \"https://example.com/blog-image.jpg\"\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/blogs",
@@ -445,7 +445,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"title\": \"My Updated Blog Post\",\n  \"content\": \"This is the updated content with new information.\",\n  \"summary\": \"An updated introduction to web development\",\n  \"tags\": [\"web\", \"development\", \"tutorial\", \"updated\"],\n  \"published\": true\n}"
+							"raw": "{\n  \"title\": \"My Updated Blog Post\",\n  \"content\": \"This is the updated content with new information.\",\n  \"summary\": \"An updated introduction to web development\",\n  \"tags\": [\"web\", \"development\", \"tutorial\", \"updated\"],\n  \"published\": true,\n  \"image\": \"https://example.com/blog-image-updated.jpg\"\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/blogs/{{BLOG_ID}}",
