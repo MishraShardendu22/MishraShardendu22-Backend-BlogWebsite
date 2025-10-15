@@ -91,10 +91,7 @@ export async function getAllBlogs(req: Request, res: Response): Promise<void> {
     res.status(500).json({ success: false, error: 'Failed to fetch blogs' })
   }
 }
-/**
- * GET /api/blogs/:id
- * Get a single blog by ID
- */
+
 export async function getBlogById(req: Request, res: Response): Promise<void> {
   try {
     const blogId = parseInt(req.params.id)
@@ -116,6 +113,7 @@ export async function getBlogById(req: Request, res: Response): Promise<void> {
           id: usersTable.id,
           email: usersTable.email,
           name: usersTable.name,
+          image: usersTable.profileImage
         },
         authorProfile: {
           firstName: userProfilesTable.firstName,
