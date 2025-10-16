@@ -5,7 +5,7 @@ import { blogTable } from '../models/schema.js'
 
 
 interface ReorderRequestBody {
-    is : number;
+    id : number;
     blogId_New : number;
 }
 
