@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { db } from '../config/database.js'
 import { blogTable, userProfilesTable, commentsTable } from '../models/schema.js'
 import { users as usersTable } from '../models/authSchema.js'
-import { eq, desc, like, and, or, count, sql } from 'drizzle-orm'
+import { eq, like, and, or, count, sql, asc } from 'drizzle-orm'
 
 
 export async function getAllBlogs(req: Request, res: Response): Promise<void> {
@@ -60,7 +60,7 @@ export async function getAllBlogs(req: Request, res: Response): Promise<void> {
       .where(whereClause)
       .limit(limit)
       .offset(offset)
-      .orderBy(desc(blogTable.orderId))
+      .orderBy(asc(blogTable.orderId))
     const blogsWithCounts = await Promise.all(
       blogs.map(async (blog: typeof blogs[0]) => {
         const [commentsCount] = await Promise.all([
