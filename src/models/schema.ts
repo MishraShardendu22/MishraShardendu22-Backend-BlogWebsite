@@ -1,5 +1,5 @@
 
-import { users } from './authSchema'
+import { users } from './authSchema.js'
 import { pgTable, integer, varchar, text, timestamp } from 'drizzle-orm/pg-core'
 
 export const blogTable = pgTable('blog', {
