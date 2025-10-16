@@ -1,0 +1,1 @@
+ALTER TABLE "blog" ALTER COLUMN "order_id" DROP IDENTITY;

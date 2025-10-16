@@ -1,4 +1,5 @@
-import { users } from './authSchema.js'
+
+import { users } from './authSchema'
 import { pgTable, integer, varchar, text, timestamp } from 'drizzle-orm/pg-core'
 
 export const blogTable = pgTable('blog', {
@@ -6,7 +7,8 @@ export const blogTable = pgTable('blog', {
   tags: text('tags').array(),
   title: varchar('title', { length: 255 }).notNull(),
   content: text('content').notNull(),
-  image: varchar('image', { length: 500 }), // Image URL or path
+  orderId: integer('order_id'),
+  image: varchar('image', { length: 500 }),
   authorId: integer('author_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),

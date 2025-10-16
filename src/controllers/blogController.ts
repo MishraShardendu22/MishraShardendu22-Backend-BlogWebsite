@@ -58,9 +58,9 @@ export async function getAllBlogs(req: Request, res: Response): Promise<void> {
       .leftJoin(usersTable, eq(blogTable.authorId, usersTable.id))
       .leftJoin(userProfilesTable, eq(usersTable.id, userProfilesTable.userId))
       .where(whereClause)
-      .orderBy(desc(blogTable.createdAt))
       .limit(limit)
       .offset(offset)
+      .orderBy(desc(blogTable.orderId))
     const blogsWithCounts = await Promise.all(
       blogs.map(async (blog: typeof blogs[0]) => {
         const [commentsCount] = await Promise.all([
@@ -172,6 +172,9 @@ export async function createBlog(req: Request, res: Response): Promise<void> {
       res.status(400).json({ success: false, error: 'Invalid image URL' })
       return
     }
+    // Calculate orderId as (current blog count + 1)
+    const totalCountResult = await db.select({ count: count() }).from(blogTable);
+    const orderId = (totalCountResult[0]?.count || 0) + 1;
     const [newBlog] = await db
       .insert(blogTable)
       .values({
@@ -180,6 +183,7 @@ export async function createBlog(req: Request, res: Response): Promise<void> {
         tags: tags || [],
         image: image || null,
         authorId: user.id,
+        orderId,
       })
       .returning({
         id: blogTable.id,
@@ -188,13 +192,14 @@ export async function createBlog(req: Request, res: Response): Promise<void> {
         tags: blogTable.tags,
         image: blogTable.image,
         authorId: blogTable.authorId,
+        orderId: blogTable.orderId,
         createdAt: blogTable.createdAt,
         updatedAt: blogTable.updatedAt,
-      })
+      });
     res.status(201).json({
       success: true,
       data: newBlog,
-    })
+    });
   } catch (error) {
     console.error('Error creating blog:', error)
     res.status(500).json({ success: false, error: 'Failed to create blog' })
