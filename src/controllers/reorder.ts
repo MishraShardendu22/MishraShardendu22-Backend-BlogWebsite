@@ -20,12 +20,12 @@ export async function reorderBlogs(req: Request, res: Response): Promise<void> {
             return;
         }
 
-        for (const { blogId_Old, blogId_New } of data) {
-            if (isNaN(blogId_Old) || isNaN(blogId_New)) {
+        for (const { id, blogId_New } of data) {
+            if (isNaN(id) || isNaN(blogId_New)) {
                 res.status(400).json({ success: false, error: 'Invalid blog IDs' });
                 return;
             }
-            await db.execute(sql`UPDATE ${blogTable} SET order_id = ${blogId_New} WHERE order_id = ${blogId_Old}`);
+            await db.execute(sql`UPDATE ${blogTable} SET order_id = ${blogId_New} WHERE id = ${id}`);
 
         }
 
