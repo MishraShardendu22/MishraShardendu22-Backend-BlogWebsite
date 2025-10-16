@@ -39,7 +39,7 @@ export async function reorderBlogs(req: Request, res: Response): Promise<void> {
 
 export async function getBlogsInOrder(req: Request, res: Response): Promise<void> {
     try {
-        const blogs = await db.select({ orderId: blogTable.orderId, title: blogTable.title }).from(blogTable).orderBy(sql`${blogTable.orderId} ASC`);
+        const blogs = await db.select({ orderId: blogTable.orderId, title: blogTable.title, id: blogTable.id }).from(blogTable).orderBy(sql`${blogTable.orderId} ASC`);
         res.status(200).json({ success: true, data: blogs });
         return;
     } catch (error) {
