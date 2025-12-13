@@ -25,15 +25,15 @@
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
     "@sendgrid/mail": "^8.1.6",
-    "@upstash/redis": "^1.35.6",
-    "bcryptjs": "^3.0.2",
-    "bullmq": "^5.61.2",
+    "@upstash/redis": "^1.35.8",
+    "bcryptjs": "^3.0.3",
+    "bullmq": "^5.66.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
-    "drizzle-orm": "^0.44.7",
-    "express": "^5.1.0",
+    "drizzle-orm": "^0.45.1",
+    "express": "^5.2.1",
     "ioredis": "^5.8.2",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.3"
   },
   "devDependencies": {
     "@types/bcryptjs": "^3.0.0",
