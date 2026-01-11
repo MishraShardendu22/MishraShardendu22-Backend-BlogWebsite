@@ -1,21 +1,21 @@
 import { Worker } from 'bullmq'
-import IORedis from 'ioredis'
 import sgMail from '@sendgrid/mail'
 
-// Parse Upstash Redis URL and create proper connection
+// Parse Upstash Redis URL and create proper connection options
 const upstashHost = process.env.UPSTASH_REDIS_REST_URL!.replace('https://', '')
 const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN!
 
 console.log('[WORKER] Connecting to Redis host:', upstashHost)
 
-const connection = new IORedis({
+// Pass connection options as an object - bullmq will create Redis connection internally
+const connection = {
   host: upstashHost,
   port: 6379,
   password: upstashToken,
   maxRetriesPerRequest: null,
   enableReadyCheck: false,
   tls: {},
-})
+}
 
 // Initialize SendGrid if key present
 const SENDGRID_KEY = process.env.SENDGRID_API_KEY
