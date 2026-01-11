@@ -12,16 +12,41 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler.js'
 
 const app: Express = express()
 const PORT = process.env.PORT || 3000
-const FRONTEND_URLS = (process.env.FRONTEND_URL || '*').split(',')
+
+// Parse and clean CORS origins
+const FRONTEND_URLS = (process.env.FRONTEND_URL || '*')
+  .split(',')
+  .map((url) => url.trim())
+  .filter((url) => url.length > 0)
+
+console.log('🔒 CORS Configuration:')
+console.log('   Allowed origins:', FRONTEND_URLS.join(', '))
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (FRONTEND_URLS.includes('*') || !origin || FRONTEND_URLS.includes(origin)) {
+      // Allow requests with no origin (mobile apps, Postman, etc.)
+      if (!origin) {
         callback(null, true)
-      } else {
-        callback(new Error('Not allowed by CORS'))
+        return
       }
+
+      // Allow all origins if wildcard is set
+      if (FRONTEND_URLS.includes('*')) {
+        callback(null, true)
+        return
+      }
+
+      // Check if origin is in allowed list
+      if (FRONTEND_URLS.includes(origin)) {
+        callback(null, true)
+        return
+      }
+
+      // Log rejected origins for debugging
+      console.warn(`⚠️  CORS blocked: ${origin}`)
+      console.warn('   Allowed origins:', FRONTEND_URLS.join(', '))
+      callback(new Error(`CORS policy: Origin ${origin} is not allowed`))
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],

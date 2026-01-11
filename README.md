@@ -47,7 +47,10 @@ JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
 OWNER_EMAIL="mishrashardendu22@gmail.com"
 
 # Frontend URL (comma-separated for multiple URLs)
-FRONTEND_URL="http://localhost:5173,http://localhost:3000"
+# Include all domains that will access your API
+# For production: Add your deployed frontend URLs
+# Example: https://blog.example.com,https://admin.example.com
+FRONTEND_URL="http://localhost:5173,http://localhost:3000,https://admin.mishrashardendu22.is-a.dev,https://mishrashardendu22.is-a.dev"
 
 # Server Port
 PORT=3000
