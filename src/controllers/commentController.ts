@@ -6,7 +6,8 @@ import { eq, desc, and, count } from 'drizzle-orm'
 
 export async function getCommentsByBlogId(req: Request, res: Response): Promise<void> {
   try {
-    const blogId = parseInt(req.params.id)
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
+    const blogId = parseInt(id)
     const page = parseInt(req.query.page as string) || 1
     const limit = parseInt(req.query.limit as string) || 10
     const offset = (page - 1) * limit
@@ -71,7 +72,8 @@ export async function getCommentsByBlogId(req: Request, res: Response): Promise<
  */
 export async function createComment(req: Request, res: Response): Promise<void> {
   try {
-    const blogId = parseInt(req.params.id)
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
+    const blogId = parseInt(id)
     const { content } = req.body
     const user = req.user!
     if (isNaN(blogId)) {
@@ -143,8 +145,10 @@ export async function createComment(req: Request, res: Response): Promise<void> 
  */
 export async function deleteComment(req: Request, res: Response): Promise<void> {
   try {
-    const blogId = parseInt(req.params.id)
-    const commentId = parseInt(req.params.commentId)
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
+    const commentIdParam = Array.isArray(req.params.commentId) ? req.params.commentId[0] : req.params.commentId
+    const blogId = parseInt(id)
+    const commentId = parseInt(commentIdParam)
     const user = req.user!
     if (isNaN(blogId) || isNaN(commentId)) {
       res.status(400).json({ success: false, error: 'Invalid blog ID or comment ID' })

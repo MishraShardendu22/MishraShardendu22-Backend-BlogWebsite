@@ -94,7 +94,8 @@ export async function getAllBlogs(req: Request, res: Response): Promise<void> {
 
 export async function getBlogById(req: Request, res: Response): Promise<void> {
   try {
-    const blogId = parseInt(req.params.id)
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
+    const blogId = parseInt(id)
     if (isNaN(blogId)) {
       res.status(400).json({ success: false, error: 'Invalid blog ID' })
       return
@@ -211,7 +212,8 @@ export async function createBlog(req: Request, res: Response): Promise<void> {
  */
 export async function updateBlog(req: Request, res: Response): Promise<void> {
   try {
-    const blogId = parseInt(req.params.id)
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
+    const blogId = parseInt(id)
   const { title, content, tags, image } = req.body
     if (isNaN(blogId)) {
       res.status(400).json({ success: false, error: 'Invalid blog ID' })
@@ -268,7 +270,8 @@ export async function updateBlog(req: Request, res: Response): Promise<void> {
  */
 export async function deleteBlog(req: Request, res: Response): Promise<void> {
   try {
-    const blogId = parseInt(req.params.id)
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
+    const blogId = parseInt(id)
     if (isNaN(blogId)) {
       res.status(400).json({ success: false, error: 'Invalid blog ID' })
       return
