@@ -27,7 +27,9 @@ This project and everyone participating in it is governed by our [Code of Conduc
 ### Prerequisites
 
 - Node.js (v18 or higher)
-- pnpm package manager
+- pnpm package manager (v8.0+)
+- PostgreSQL database (Neon recommended)
+- Gmail account with App Password or SendGrid API key
 - PostgreSQL database
 
 ### Installation
