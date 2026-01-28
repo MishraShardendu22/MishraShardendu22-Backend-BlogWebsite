@@ -1,8 +1,8 @@
 {
   "name": "mishrashardendu22-blog-backend",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
-  "description": "Express backend for MishraShardendu22 Blog",
+  "description": "Express backend API for MishraShardendu22 Blog with OTP verification",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
