@@ -5,12 +5,13 @@ A robust Express.js backend API for a blog platform with email verification usin
 ## Features
 
 - 🔐 **JWT Authentication** - Secure user authentication with JSON Web Tokens
-- 📧 **Email Verification** - OTP-based email verification system
-- ✍️ **Blog Management** - Create, read, update, and delete blog posts
-- 💬 **Comment System** - Verified users can comment on blog posts
-- 👤 **User Profiles** - Extended user profile information
+- 📧 **Email Verification** - OTP-based email verification system with automatic expiration
+- ✍️ **Blog Management** - Complete CRUD operations for blog posts with rich content support
+- 💬 **Comment System** - Verified users can comment on blog posts with nested replies
+- 👤 **User Profiles** - Extended user profile information with customization options
 - 🧹 **Auto Cleanup** - Automatic removal of expired OTPs and unverified users
-- 📊 **Statistics** - Blog and comment statistics
+- 📊 **Statistics** - Comprehensive blog and comment statistics with analytics
+- 🛡️ **Security** - Rate limiting, CORS protection, and input validation
 
 ## Tech Stack
 
