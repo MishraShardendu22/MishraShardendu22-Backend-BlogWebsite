@@ -6,6 +6,7 @@ We release patches for security vulnerabilities. Currently supported versions:
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 1.1.x   | :white_check_mark: |
 | 1.0.x   | :white_check_mark: |
 | < 1.0   | :x:                |
 
@@ -22,7 +23,7 @@ We take the security of our Blog Backend API seriously. If you believe you have 
 
 **Report security vulnerabilities by emailing:**
 
-📧 [INSERT YOUR SECURITY EMAIL HERE]
+📧 mishrashardendu22@gmail.com
 
 ### What to Include:
 
