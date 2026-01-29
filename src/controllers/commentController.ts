@@ -15,50 +15,57 @@ export async function getCommentsByBlogId(req: Request, res: Response): Promise<
       res.status(400).json({ success: false, error: 'Invalid blog ID' })
       return
     }
-    const blog = await db.select().from(blogTable).where(eq(blogTable.id, blogId)).limit(1)
+    
+    // Run all queries concurrently for better performance
+    const [blog, comments, totalCount] = await Promise.all([
+      db.select().from(blogTable).where(eq(blogTable.id, blogId)).limit(1),
+      db
+        .select({
+          id: commentsTable.id,
+          content: commentsTable.content,
+          userId: commentsTable.userId,
+          blogId: commentsTable.blogId,
+          createdAt: commentsTable.createdAt,
+          user: {
+            id: usersTable.id,
+            email: usersTable.email,
+            name: usersTable.name,
+            isVerified: usersTable.isVerified,
+            profileImage: usersTable.profileImage,
+          },
+          userProfile: {
+            firstName: userProfilesTable.firstName,
+            lastName: userProfilesTable.lastName,
+            avatar: userProfilesTable.avatar,
+          },
+        })
+        .from(commentsTable)
+        .leftJoin(usersTable, eq(commentsTable.userId, usersTable.id))
+        .leftJoin(userProfilesTable, eq(usersTable.id, userProfilesTable.userId))
+        .where(eq(commentsTable.blogId, blogId))
+        .orderBy(desc(commentsTable.createdAt))
+        .limit(limit)
+        .offset(offset),
+      db
+        .select({ count: count() })
+        .from(commentsTable)
+        .where(eq(commentsTable.blogId, blogId))
+    ])
+    
     if (blog.length === 0) {
       res.status(404).json({ success: false, error: 'Blog not found' })
       return
     }
-    const comments = await db
-      .select({
-        id: commentsTable.id,
-        content: commentsTable.content,
-        userId: commentsTable.userId,
-        blogId: commentsTable.blogId,
-        createdAt: commentsTable.createdAt,
-        user: {
-          id: usersTable.id,
-          email: usersTable.email,
-          name: usersTable.name,
-          isVerified: usersTable.isVerified,
-          profileImage: usersTable.profileImage,
-        },
-        userProfile: {
-          firstName: userProfilesTable.firstName,
-          lastName: userProfilesTable.lastName,
-          avatar: userProfilesTable.avatar,
-        },
-      })
-      .from(commentsTable)
-      .leftJoin(usersTable, eq(commentsTable.userId, usersTable.id))
-      .leftJoin(userProfilesTable, eq(usersTable.id, userProfilesTable.userId))
-      .where(eq(commentsTable.blogId, blogId))
-      .orderBy(desc(commentsTable.createdAt))
-      .limit(limit)
-      .offset(offset)
-    const totalCount = await db
-      .select({ count: count() })
-      .from(commentsTable)
-      .where(eq(commentsTable.blogId, blogId))
+    
+    const total = totalCount[0]?.count || 0
     res.status(200).json({
       success: true,
       data: comments,
       pagination: {
         page,
         limit,
-        total: totalCount[0]?.count || 0,
-        totalPages: Math.ceil((totalCount[0]?.count || 0) / limit),
+        total,
+        totalPages: Math.ceil(total / limit),
       },
     })
   } catch (error) {
@@ -85,12 +92,15 @@ export async function createComment(req: Request, res: Response): Promise<void> 
       return
     }
 
-    // Check if user is verified
-    const [userRecord] = await db
-      .select({ isVerified: usersTable.isVerified })
-      .from(usersTable)
-      .where(eq(usersTable.id, user.id))
-      .limit(1)
+    // Run user verification check and blog check concurrently for better performance
+    const [[userRecord], blog] = await Promise.all([
+      db
+        .select({ isVerified: usersTable.isVerified })
+        .from(usersTable)
+        .where(eq(usersTable.id, user.id))
+        .limit(1),
+      db.select().from(blogTable).where(eq(blogTable.id, blogId)).limit(1)
+    ])
 
     if (!userRecord || !userRecord.isVerified) {
       res.status(403).json({
@@ -101,7 +111,6 @@ export async function createComment(req: Request, res: Response): Promise<void> 
       return
     }
 
-    const blog = await db.select().from(blogTable).where(eq(blogTable.id, blogId)).limit(1)
     if (blog.length === 0) {
       res.status(404).json({ success: false, error: 'Blog not found' })
       return
@@ -154,19 +163,24 @@ export async function deleteComment(req: Request, res: Response): Promise<void> 
       res.status(400).json({ success: false, error: 'Invalid blog ID or comment ID' })
       return
     }
-    const blog = await db.select().from(blogTable).where(eq(blogTable.id, blogId)).limit(1)
+    
+    // Run blog check and comment check concurrently for better performance
+    const [blog, [comment]] = await Promise.all([
+      db.select().from(blogTable).where(eq(blogTable.id, blogId)).limit(1),
+      db
+        .select({
+          id: commentsTable.id,
+          userId: commentsTable.userId,
+        })
+        .from(commentsTable)
+        .where(and(eq(commentsTable.id, commentId), eq(commentsTable.blogId, blogId)))
+        .limit(1)
+    ])
+    
     if (blog.length === 0) {
       res.status(404).json({ success: false, error: 'Blog not found' })
       return
     }
-    const [comment] = await db
-      .select({
-        id: commentsTable.id,
-        userId: commentsTable.userId,
-      })
-      .from(commentsTable)
-      .where(and(eq(commentsTable.id, commentId), eq(commentsTable.blogId, blogId)))
-      .limit(1)
     if (!comment) {
       res.status(404).json({ success: false, error: 'Comment not found' })
       return

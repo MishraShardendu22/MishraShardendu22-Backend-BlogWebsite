@@ -62,34 +62,34 @@ router.post('/register', async (req: Request, res: Response) => {
       })
       .returning()
 
-    // Generate and store OTP
+    // Generate OTP and token concurrently for better performance
     const otp = generateOTP()
-    const otpStored = await storeOTP(email, otp)
-
-    if (!otpStored) {
-      res.status(500).json({ success: false, error: 'Failed to generate OTP' })
-      return
-    }
-
-    // Send OTP email
-    const emailSent = await sendOTPEmail({
-      to_email: email,
-      to_name: name,
-      otp,
-    })
-
-    if (!emailSent) {
-      console.error('[AUTH] Failed to send OTP email')
-      // Continue anyway, user can request resend
-    }
-
-    // Generate token
     const token = generateToken({
       userId: newUser.id,
       email: newUser.email,
       name: newUser.name,
       isOwner: newUser.email === OWNER_EMAIL,
     })
+    
+    // Store OTP and send email concurrently
+    const [otpStored, emailSent] = await Promise.all([
+      storeOTP(email, otp),
+      sendOTPEmail({
+        to_email: email,
+        to_name: name,
+        otp,
+      })
+    ])
+
+    if (!otpStored) {
+      res.status(500).json({ success: false, error: 'Failed to generate OTP' })
+      return
+    }
+
+    if (!emailSent) {
+      console.error('[AUTH] Failed to send OTP email')
+      // Continue anyway, user can request resend
+    }
 
     res.status(201).json({
       success: true,
@@ -323,21 +323,22 @@ router.post('/resend-otp', async (req: Request, res: Response) => {
       return
     }
 
-    // Generate and store new OTP
+    // Generate OTP and store it, then send email concurrently
     const otp = generateOTP()
-    const otpStored = await storeOTP(email, otp)
+    
+    const [otpStored, emailSent] = await Promise.all([
+      storeOTP(email, otp),
+      sendOTPEmail({
+        to_email: email,
+        to_name: user.name,
+        otp,
+      })
+    ])
 
     if (!otpStored) {
       res.status(500).json({ success: false, error: 'Failed to generate OTP' })
       return
     }
-
-    // Send OTP email
-    const emailSent = await sendOTPEmail({
-      to_email: email,
-      to_name: user.name,
-      otp,
-    })
 
     if (!emailSent) {
       res.status(500).json({ success: false, error: 'Failed to send OTP email' })

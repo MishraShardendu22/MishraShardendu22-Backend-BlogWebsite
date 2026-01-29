@@ -20,14 +20,20 @@ export async function reorderBlogs(req: Request, res: Response): Promise<void> {
             return;
         }
 
+        // Validate all IDs first before executing any updates
         for (const { id, blogId_New } of data) {
             if (isNaN(id) || isNaN(blogId_New)) {
                 res.status(400).json({ success: false, error: 'Invalid blog IDs' });
                 return;
             }
-            await db.execute(sql`UPDATE ${blogTable} SET order_id = ${blogId_New} WHERE id = ${id}`);
-
         }
+        
+        // Run all update operations concurrently for better performance
+        await Promise.all(
+            data.map(({ id, blogId_New }) => 
+                db.execute(sql`UPDATE ${blogTable} SET order_id = ${blogId_New} WHERE id = ${id}`)
+            )
+        );
 
         res.status(200).json({ success: true, message: 'Blogs reordered successfully' });
         return;
