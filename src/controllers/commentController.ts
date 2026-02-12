@@ -3,6 +3,7 @@ import { db } from '../config/database.js'
 import { commentsTable, blogTable, userProfilesTable } from '../models/schema.js'
 import { users as usersTable } from '../models/authSchema.js'
 import { eq, desc, and, count } from 'drizzle-orm'
+import { cache } from '../utils/cache.js'
 
 export async function getCommentsByBlogId(req: Request, res: Response): Promise<void> {
   try {
@@ -143,6 +144,11 @@ export async function createComment(req: Request, res: Response): Promise<void> 
         user: userInfo || null,
       },
     })
+
+    // Invalidate cache
+    await cache.del(`blog:${blogId}`)
+    await cache.invalidatePattern('blogs:*')
+    await cache.del('blog-stats')
   } catch (error) {
     console.error('Error creating comment:', error)
     res.status(500).json({ success: false, error: 'Failed to create comment' })
@@ -195,6 +201,12 @@ export async function deleteComment(req: Request, res: Response): Promise<void> 
       return
     }
     await db.delete(commentsTable).where(eq(commentsTable.id, commentId))
+
+    // Invalidate cache
+    await cache.del(`blog:${blogId}`)
+    await cache.invalidatePattern('blogs:*')
+    await cache.del('blog-stats')
+
     res.status(200).json({
       success: true,
       message: 'Comment deleted successfully',

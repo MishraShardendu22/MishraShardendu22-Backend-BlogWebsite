@@ -3,6 +3,7 @@ import { db } from '../config/database.js'
 import { blogTable, userProfilesTable, commentsTable } from '../models/schema.js'
 import { users as usersTable } from '../models/authSchema.js'
 import { eq, like, and, or, count, sql, asc } from 'drizzle-orm'
+import { cache } from '../utils/cache.js'
 
 
 export async function getAllBlogs(req: Request, res: Response): Promise<void> {
@@ -13,6 +14,17 @@ export async function getAllBlogs(req: Request, res: Response): Promise<void> {
     const author = req.query.author as string
     const search = req.query.search as string
     const offset = (page - 1) * limit
+
+    // Create cache key based on query params
+    const cacheKey = `blogs:${page}:${limit}:${tag || ''}:${author || ''}:${search || ''}`
+
+    // Try to get from cache
+    const cachedData = await cache.get(cacheKey)
+    if (cachedData && typeof cachedData === 'string') {
+      res.status(200).json(JSON.parse(cachedData))
+      return
+    }
+
     const conditions = []
     if (tag) {
       conditions.push(sql`${blogTable.tags} @> ARRAY[${tag}]::text[]`)
@@ -56,6 +68,11 @@ export async function getAllBlogs(req: Request, res: Response): Promise<void> {
             lastName: userProfilesTable.lastName,
             avatar: userProfilesTable.avatar,
           },
+          comments: sql<number>`(
+            SELECT COUNT(*)
+            FROM ${commentsTable}
+            WHERE ${commentsTable.blogId} = ${blogTable.id}
+          )`.as('comments'),
         })
         .from(blogTable)
         .leftJoin(usersTable, eq(blogTable.authorId, usersTable.id))
@@ -67,30 +84,22 @@ export async function getAllBlogs(req: Request, res: Response): Promise<void> {
       db.select({ count: count() }).from(blogTable).where(whereClause)
     ])
     
-    // Fetch all comment counts concurrently for all blogs
-    const blogsWithCounts = await Promise.all(
-      blogs.map(async (blog: typeof blogs[0]) => {
-        const commentsCount = await db
-          .select({ count: count() })
-          .from(commentsTable)
-          .where(eq(commentsTable.blogId, blog.id))
-        return {
-          ...blog,
-          comments: commentsCount[0]?.count || 0,
-        }
-      })
-    )
     const total = totalCount[0]?.count || 0
-    res.status(200).json({
+    const response = {
       success: true,
-      data: blogsWithCounts,
+      data: blogs,
       pagination: {
         page,
         limit,
         total,
         totalPages: Math.ceil(total / limit),
       },
-    })
+    }
+
+    // Cache the response for 5 minutes
+    await cache.set(cacheKey, response, 300)
+
+    res.status(200).json(response)
   } catch (error) {
     console.error('Error fetching blogs:', error)
     res.status(500).json({ success: false, error: 'Failed to fetch blogs' })
@@ -103,6 +112,15 @@ export async function getBlogById(req: Request, res: Response): Promise<void> {
     const blogId = parseInt(id)
     if (isNaN(blogId)) {
       res.status(400).json({ success: false, error: 'Invalid blog ID' })
+      return
+    }
+
+    const cacheKey = `blog:${blogId}`
+
+    // Try to get from cache
+    const cachedData = await cache.get(cacheKey)
+    if (cachedData && typeof cachedData === 'string') {
+      res.status(200).json(JSON.parse(cachedData))
       return
     }
     
@@ -148,10 +166,16 @@ export async function getBlogById(req: Request, res: Response): Promise<void> {
       image: blog[0].image,
       comments: commentsCount[0]?.count || 0,
     }
-    res.status(200).json({
+
+    const response = {
       success: true,
       data: blogWithCounts,
-    })
+    }
+
+    // Cache for 10 minutes
+    await cache.set(cacheKey, response, 600)
+
+    res.status(200).json(response)
   } catch (error) {
     console.error('Error fetching blog:', error)
     res.status(500).json({ success: false, error: 'Failed to fetch blog' })
@@ -203,6 +227,11 @@ export async function createBlog(req: Request, res: Response): Promise<void> {
         createdAt: blogTable.createdAt,
         updatedAt: blogTable.updatedAt,
       });
+
+    // Invalidate blogs cache
+    await cache.invalidatePattern('blogs:*')
+    await cache.del('blog-stats')
+
     res.status(201).json({
       success: true,
       data: newBlog,
@@ -261,6 +290,12 @@ export async function updateBlog(req: Request, res: Response): Promise<void> {
         createdAt: blogTable.createdAt,
         updatedAt: blogTable.updatedAt,
       })
+
+    // Invalidate cache
+    await cache.del(`blog:${blogId}`)
+    await cache.invalidatePattern('blogs:*')
+    await cache.del('blog-stats')
+
     res.status(200).json({
       success: true,
       data: updatedBlog,
@@ -288,6 +323,12 @@ export async function deleteBlog(req: Request, res: Response): Promise<void> {
       return
     }
     await db.delete(blogTable).where(eq(blogTable.id, blogId))
+
+    // Invalidate cache
+    await cache.del(`blog:${blogId}`)
+    await cache.invalidatePattern('blogs:*')
+    await cache.del('blog-stats')
+
     res.status(200).json({
       success: true,
       message: 'Blog deleted successfully',

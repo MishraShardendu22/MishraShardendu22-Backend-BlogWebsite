@@ -3,6 +3,9 @@ dotenv.config()
 
 import cors from 'cors'
 import express, { Request, Response, Express } from 'express'
+import compression from 'compression'
+import rateLimit from 'express-rate-limit'
+import helmet from 'helmet'
 
 import authRoutes from './routes/auth.js'
 import blogRoutes from './routes/blogs.js'
@@ -57,6 +60,16 @@ app.use(
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(compression())
+app.use(helmet())
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.',
+})
+app.use(limiter)
 
 app.get('/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', message: 'Blog Backend API is running' })

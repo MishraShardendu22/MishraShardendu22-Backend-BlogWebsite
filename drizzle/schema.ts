@@ -1,7 +1,5 @@
-import { pgTable, varchar, timestamp, foreignKey, integer, text, unique, serial, boolean } from "drizzle-orm/pg-core"
+import { pgTable, varchar, timestamp, foreignKey, integer, text, unique, serial, boolean, index } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
-
-
 
 export const otpVerification = pgTable("otp_verification", {
 	email: varchar({ length: 255 }).primaryKey().notNull(),
@@ -26,6 +24,9 @@ export const blog = pgTable("blog", {
 			foreignColumns: [users.id],
 			name: "blog_author_id_users_id_fk"
 		}).onDelete("cascade"),
+	index("blog_author_id_idx").on(table.authorId),
+	index("blog_order_id_idx").on(table.orderId),
+	index("blog_tags_gin_idx").on(table.tags).using(sql`gin`),
 ]);
 
 export const comments = pgTable("comments", {
@@ -45,6 +46,8 @@ export const comments = pgTable("comments", {
 			foreignColumns: [blog.id],
 			name: "comments_blog_id_blog_id_fk"
 		}).onDelete("cascade"),
+	index("comments_blog_id_idx").on(table.blogId),
+	index("comments_user_id_idx").on(table.userId),
 ]);
 
 export const userProfiles = pgTable("user_profiles", {
