@@ -49,7 +49,7 @@ app.use(
       // Log rejected origins for debugging
       console.warn(`⚠️  CORS blocked: ${origin}`)
       console.warn('   Allowed origins:', FRONTEND_URLS.join(', '))
-      callback(new Error(`CORS policy: Origin ${origin} is not allowed`))
+      callback(null, false)
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -58,10 +58,28 @@ app.use(
   })
 )
 
+// Handle OPTIONS preflight requests explicitly before other middleware
+app.options('*', cors({
+  origin: (origin, callback) => {
+    if (!origin || FRONTEND_URLS.includes('*') || FRONTEND_URLS.includes(origin)) {
+      callback(null, true)
+      return
+    }
+    callback(null, false)
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+  exposedHeaders: ['Set-Cookie'],
+}))
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(compression())
-app.use(helmet())
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  crossOriginOpenerPolicy: { policy: 'unsafe-none' },
+}))
 
 // Rate limiting
 const limiter = rateLimit({
