@@ -59,7 +59,8 @@ app.use(
 )
 
 // Handle OPTIONS preflight requests explicitly before other middleware
-app.options('*', cors({
+// Express 5 uses path-to-regexp v8 which requires named wildcard: {*path}
+app.options('/{*path}', cors({
   origin: (origin, callback) => {
     if (!origin || FRONTEND_URLS.includes('*') || FRONTEND_URLS.includes(origin)) {
       callback(null, true)
