@@ -61,8 +61,8 @@ importers:
         specifier: ^9.0.10
         version: 9.0.10
       '@types/node':
-        specifier: ^25.3.2
-        version: 25.3.2
+        specifier: ^25.3.3
+        version: 25.3.3
       drizzle-kit:
         specifier: ^0.31.9
         version: 0.31.9
@@ -612,8 +612,8 @@ packages:
   '@types/node@22.19.13':
     resolution: {integrity: sha512-akNQMv0wW5uyRpD2v2IEyRSZiR+BeGuoB6L310EgGObO44HSMNT8z1xzio28V8qOrgYaopIDNA18YgdXd+qTiw==}
 
-  '@types/node@25.3.2':
-    resolution: {integrity: sha512-RpV6r/ij22zRRdyBPcxDeKAzH43phWVKEjL2iksqo1Vz3CuBUrgmPpPhALKiRfU7OMCmeeO9vECBMsV0hMTG8Q==}
+  '@types/node@25.3.3':
+    resolution: {integrity: sha512-DpzbrH7wIcBaJibpKo9nnSQL0MTRdnWttGyE5haGwK86xgMOkFLp7vEyfQPGLOJh5wNYiJ3V9PmUMDhV9u8kkQ==}
 
   '@types/pg@8.16.0':
     resolution: {integrity: sha512-RmhMd/wD+CF8Dfo+cVIy3RR5cl8CyfXQ0tGgW6XBL8L4LM/UTEbNXYRbLwU6w+CgrKBNbrQWt4FUtTfaU5jSYQ==}
@@ -1602,24 +1602,24 @@ snapshots:
   '@types/body-parser@1.19.6':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 25.3.2
+      '@types/node': 25.3.3
 
   '@types/compression@1.8.1':
     dependencies:
       '@types/express': 5.0.6
-      '@types/node': 25.3.2
+      '@types/node': 25.3.3
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 25.3.2
+      '@types/node': 25.3.3
 
   '@types/cors@2.8.19':
     dependencies:
-      '@types/node': 25.3.2
+      '@types/node': 25.3.3
 
   '@types/express-serve-static-core@5.1.1':
     dependencies:
-      '@types/node': 25.3.2
+      '@types/node': 25.3.3
       '@types/qs': 6.14.0
       '@types/range-parser': 1.2.7
       '@types/send': 1.2.1
@@ -1635,7 +1635,7 @@ snapshots:
   '@types/jsonwebtoken@9.0.10':
     dependencies:
       '@types/ms': 2.1.0
-      '@types/node': 25.3.2
+      '@types/node': 25.3.3
 
   '@types/ms@2.1.0': {}
 
@@ -1643,13 +1643,13 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
-  '@types/node@25.3.2':
+  '@types/node@25.3.3':
     dependencies:
       undici-types: 7.18.2
 
   '@types/pg@8.16.0':
     dependencies:
-      '@types/node': 25.3.2
+      '@types/node': 25.3.3
       pg-protocol: 1.11.0
       pg-types: 2.2.0
 
@@ -1659,12 +1659,12 @@ snapshots:
 
   '@types/send@1.2.1':
     dependencies:
-      '@types/node': 25.3.2
+      '@types/node': 25.3.3
 
   '@types/serve-static@2.2.0':
     dependencies:
       '@types/http-errors': 2.0.5
-      '@types/node': 25.3.2
+      '@types/node': 25.3.3
 
   '@upstash/redis@1.36.3':
     dependencies:
