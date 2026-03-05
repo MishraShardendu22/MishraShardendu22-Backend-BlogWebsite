@@ -27,7 +27,7 @@
     "@sendgrid/mail": "^8.1.6",
     "@upstash/redis": "^1.36.3",
     "bcryptjs": "^3.0.3",
-    "bullmq": "^5.70.1",
+    "bullmq": "^5.70.2",
     "compression": "^1.8.1",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
