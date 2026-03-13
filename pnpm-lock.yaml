@@ -15,14 +15,14 @@ importers:
         specifier: ^8.1.6
         version: 8.1.6
       '@upstash/redis':
-        specifier: ^1.36.4
-        version: 1.36.4
+        specifier: ^1.37.0
+        version: 1.37.0
       bcryptjs:
         specifier: ^3.0.3
         version: 3.0.3
       bullmq:
-        specifier: ^5.70.4
-        version: 5.70.4
+        specifier: ^5.71.0
+        version: 5.71.0
       compression:
         specifier: ^1.8.1
         version: 1.8.1
@@ -34,7 +34,7 @@ importers:
         version: 17.3.1
       drizzle-orm:
         specifier: ^0.45.1
-        version: 0.45.1(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(@upstash/redis@1.36.4)(gel@2.1.1)(kysely@0.28.8)
+        version: 0.45.1(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(@upstash/redis@1.37.0)(gel@2.1.1)(kysely@0.28.8)
       express:
         specifier: ^5.2.1
         version: 5.2.1
@@ -61,8 +61,8 @@ importers:
         specifier: ^9.0.10
         version: 9.0.10
       '@types/node':
-        specifier: ^25.4.0
-        version: 25.4.0
+        specifier: ^25.5.0
+        version: 25.5.0
       drizzle-kit:
         specifier: ^0.31.9
         version: 0.31.9
@@ -612,8 +612,8 @@ packages:
   '@types/node@22.19.15':
     resolution: {integrity: sha512-F0R/h2+dsy5wJAUe3tAU6oqa2qbWY5TpNfL/RGmo1y38hiyO1w3x2jPtt76wmuaJI4DQnOBu21cNXQ2STIUUWg==}
 
-  '@types/node@25.4.0':
-    resolution: {integrity: sha512-9wLpoeWuBlcbBpOY3XmzSTG3oscB6xjBEEtn+pYXTfhyXhIxC5FsBer2KTopBlvKEiW9l13po9fq+SJY/5lkhw==}
+  '@types/node@25.5.0':
+    resolution: {integrity: sha512-jp2P3tQMSxWugkCUKLRPVUpGaL5MVFwF8RDuSRztfwgN1wmqJeMSbKlnEtQqU8UrhTmzEmZdu2I6v2dpp7XIxw==}
 
   '@types/pg@8.16.0':
     resolution: {integrity: sha512-RmhMd/wD+CF8Dfo+cVIy3RR5cl8CyfXQ0tGgW6XBL8L4LM/UTEbNXYRbLwU6w+CgrKBNbrQWt4FUtTfaU5jSYQ==}
@@ -630,8 +630,8 @@ packages:
   '@types/serve-static@2.2.0':
     resolution: {integrity: sha512-8mam4H1NHLtu7nmtalF7eyBH14QyOASmcxHhSfEoRyr0nP/YdoesEtU+uSRvMe96TW/HPTtkoKqQLl53N7UXMQ==}
 
-  '@upstash/redis@1.36.4':
-    resolution: {integrity: sha512-w4s/msmyMqxOxaVhC8TQ2whJ77+Zd8YaSFokXL4mULQopaYb4xNJcm/PedtFQyLJn65nneySw9IwYnlMBBmFHg==}
+  '@upstash/redis@1.37.0':
+    resolution: {integrity: sha512-LqOJ3+XWPLSZ2rGSed5DYG3ixybxb8EhZu3yQqF7MdZX1wLBG/FRcI6xcUZXHy/SS7mmXWyadrud0HJHkOc+uw==}
 
   accepts@2.0.0:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
@@ -657,8 +657,8 @@ packages:
   buffer-from@1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
 
-  bullmq@5.70.4:
-    resolution: {integrity: sha512-S58YT/tGdhc4pEPcIahtZRBR1TcTLpss1UKiXimF+Vy4yZwF38pW2IvhHqs4j4dEbZqDt8oi0jGGN/WYQHbPDg==}
+  bullmq@5.71.0:
+    resolution: {integrity: sha512-aeNWh4drsafSKnAJeiNH/nZP/5O8ZdtdMbnOPZmpjXj7NZUP5YC901U3bIH41iZValm7d1i3c34ojv7q31m30w==}
 
   bytes@3.1.2:
     resolution: {integrity: sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg==}
@@ -1602,24 +1602,24 @@ snapshots:
   '@types/body-parser@1.19.6':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 25.4.0
+      '@types/node': 25.5.0
 
   '@types/compression@1.8.1':
     dependencies:
       '@types/express': 5.0.6
-      '@types/node': 25.4.0
+      '@types/node': 25.5.0
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 25.4.0
+      '@types/node': 25.5.0
 
   '@types/cors@2.8.19':
     dependencies:
-      '@types/node': 25.4.0
+      '@types/node': 25.5.0
 
   '@types/express-serve-static-core@5.1.1':
     dependencies:
-      '@types/node': 25.4.0
+      '@types/node': 25.5.0
       '@types/qs': 6.14.0
       '@types/range-parser': 1.2.7
       '@types/send': 1.2.1
@@ -1635,7 +1635,7 @@ snapshots:
   '@types/jsonwebtoken@9.0.10':
     dependencies:
       '@types/ms': 2.1.0
-      '@types/node': 25.4.0
+      '@types/node': 25.5.0
 
   '@types/ms@2.1.0': {}
 
@@ -1643,13 +1643,13 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
-  '@types/node@25.4.0':
+  '@types/node@25.5.0':
     dependencies:
       undici-types: 7.18.2
 
   '@types/pg@8.16.0':
     dependencies:
-      '@types/node': 25.4.0
+      '@types/node': 25.5.0
       pg-protocol: 1.11.0
       pg-types: 2.2.0
 
@@ -1659,14 +1659,14 @@ snapshots:
 
   '@types/send@1.2.1':
     dependencies:
-      '@types/node': 25.4.0
+      '@types/node': 25.5.0
 
   '@types/serve-static@2.2.0':
     dependencies:
       '@types/http-errors': 2.0.5
-      '@types/node': 25.4.0
+      '@types/node': 25.5.0
 
-  '@upstash/redis@1.36.4':
+  '@upstash/redis@1.37.0':
     dependencies:
       uncrypto: 0.1.3
 
@@ -1705,7 +1705,7 @@ snapshots:
 
   buffer-from@1.1.2: {}
 
-  bullmq@5.70.4:
+  bullmq@5.71.0:
     dependencies:
       cron-parser: 4.9.0
       ioredis: 5.9.3
@@ -1798,11 +1798,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.45.1(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(@upstash/redis@1.36.4)(gel@2.1.1)(kysely@0.28.8):
+  drizzle-orm@0.45.1(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(@upstash/redis@1.37.0)(gel@2.1.1)(kysely@0.28.8):
     optionalDependencies:
       '@neondatabase/serverless': 1.0.2
       '@types/pg': 8.16.0
-      '@upstash/redis': 1.36.4
+      '@upstash/redis': 1.37.0
       gel: 2.1.1
       kysely: 0.28.8
 
