@@ -27,7 +27,7 @@
     "@sendgrid/mail": "^8.1.6",
     "@upstash/redis": "^1.37.0",
     "bcryptjs": "^3.0.3",
-    "bullmq": "^5.72.1",
+    "bullmq": "^5.73.0",
     "compression": "^1.8.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.0",
@@ -42,7 +42,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^25.5.0",
+    "@types/node": "^25.5.1",
     "drizzle-kit": "^0.31.10",
     "tsx": "^4.21.0",
     "typescript": "^6.0.2"
