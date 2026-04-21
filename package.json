@@ -23,11 +23,11 @@
   "author": "Shardendu Mishra <mishrashardendu22@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@neondatabase/serverless": "^1.0.2",
+    "@neondatabase/serverless": "^1.1.0",
     "@sendgrid/mail": "^8.1.6",
     "@upstash/redis": "^1.37.0",
     "bcryptjs": "^3.0.3",
-    "bullmq": "^5.74.1",
+    "bullmq": "^5.75.2",
     "compression": "^1.8.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
@@ -45,6 +45,6 @@
     "@types/node": "^25.6.0",
     "drizzle-kit": "^0.31.10",
     "tsx": "^4.21.0",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.3"
   }
 }
