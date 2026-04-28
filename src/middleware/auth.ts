@@ -1,13 +1,15 @@
 import { Request, Response, NextFunction } from 'express'
+import jwt, { type JwtPayload } from 'jsonwebtoken'
 import { db } from '../config/database.js'
 import { users } from '../models/authSchema.js'
 import { verifyToken } from '../config/auth.js'
 import { eq } from 'drizzle-orm'
 
-const OWNER_EMAIL = process.env.OWNER_EMAIL! 
+const OWNER_EMAIL = process.env.OWNER_EMAIL!
+const PORTFOLIO_JWT_SECRET = process.env.PORTFOLIO_JWT_SECRET
 
 export interface AuthenticatedUser {
-  id: number
+  id: number | string
   email: string
   name: string
   isOwner: boolean
@@ -62,6 +64,30 @@ async function getAuthenticatedUser(req: Request): Promise<AuthenticatedUser | n
   }
 }
 
+function getOwnerFromPortfolioToken(req: Request): AuthenticatedUser | null {
+  if (!PORTFOLIO_JWT_SECRET) return null
+
+  const token = getTokenFromHeader(req)
+  if (!token) return null
+
+  try {
+    const decoded = jwt.verify(token, PORTFOLIO_JWT_SECRET) as JwtPayload
+    const email = typeof decoded.email === 'string' ? decoded.email : ''
+    const id = typeof decoded.id === 'string' ? decoded.id : 'portfolio-owner'
+
+    if (!email || email !== OWNER_EMAIL) return null
+
+    return {
+      id,
+      email,
+      name: 'Portfolio Owner',
+      isOwner: true,
+    }
+  } catch {
+    return null
+  }
+}
+
 export async function requireAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const user = await getAuthenticatedUser(req)
@@ -80,16 +106,24 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
 export async function requireOwner(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const user = await getAuthenticatedUser(req)
-    if (!user) {
-      res.status(401).json({ success: false, error: 'Unauthorized' })
+    if (user) {
+      if (!user.isOwner) {
+        res.status(403).json({ success: false, error: 'Forbidden - Owner access required' })
+        return
+      }
+      req.user = user
+      next()
       return
     }
-    if (!user.isOwner) {
-      res.status(403).json({ success: false, error: 'Forbidden - Owner access required' })
+
+    const portfolioOwner = getOwnerFromPortfolioToken(req)
+    if (portfolioOwner) {
+      req.user = portfolioOwner
+      next()
       return
     }
-    req.user = user
-    next()
+
+    res.status(401).json({ success: false, error: 'Unauthorized' })
   } catch (error) {
     console.error('Auth middleware error:', error)
     res.status(500).json({ success: false, error: 'Internal server error' })

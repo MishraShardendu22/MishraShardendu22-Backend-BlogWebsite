@@ -16,11 +16,24 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler.js'
 const app: Express = express()
 const PORT = process.env.PORT || 3000
 
+const DEFAULT_ORIGINS = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://admin.mishrashardendu22.is-a.dev',
+  'https://mishrashardendu22.is-a.dev',
+]
+
 // Parse and clean CORS origins
-const FRONTEND_URLS = (process.env.FRONTEND_URL || '*')
+const envOrigins = (process.env.FRONTEND_URL || '')
   .split(',')
   .map((url) => url.trim())
   .filter((url) => url.length > 0)
+
+const hasWildcard = envOrigins.includes('*')
+const FRONTEND_URLS = hasWildcard
+  ? ['*']
+  : Array.from(new Set([...envOrigins, ...DEFAULT_ORIGINS]))
+const allowAllOrigins = FRONTEND_URLS.includes('*')
 
 console.log('🔒 CORS Configuration:')
 console.log('   Allowed origins:', FRONTEND_URLS.join(', '))
@@ -35,7 +48,7 @@ app.use(
       }
 
       // Allow all origins if wildcard is set
-      if (FRONTEND_URLS.includes('*')) {
+      if (allowAllOrigins) {
         callback(null, true)
         return
       }
@@ -62,7 +75,7 @@ app.use(
 // Express 5 uses path-to-regexp v8 which requires named wildcard: {*path}
 app.options('/{*path}', cors({
   origin: (origin, callback) => {
-    if (!origin || FRONTEND_URLS.includes('*') || FRONTEND_URLS.includes(origin)) {
+    if (!origin || allowAllOrigins || FRONTEND_URLS.includes(origin)) {
       callback(null, true)
       return
     }
