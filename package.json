@@ -25,15 +25,15 @@
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
     "@sendgrid/mail": "^8.1.6",
-    "@upstash/redis": "^1.37.0",
+    "@upstash/redis": "^1.38.0",
     "bcryptjs": "^3.0.3",
-    "bullmq": "^5.76.4",
+    "bullmq": "^5.76.10",
     "compression": "^1.8.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "express": "^5.2.1",
-    "express-rate-limit": "^8.4.1",
+    "express-rate-limit": "^8.5.2",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3"
   },
@@ -42,9 +42,9 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^25.6.0",
+    "@types/node": "^25.9.1",
     "drizzle-kit": "^0.31.10",
-    "tsx": "^4.21.0",
+    "tsx": "^4.22.3",
     "typescript": "^6.0.3"
   }
 }

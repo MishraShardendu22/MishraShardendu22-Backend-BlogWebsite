@@ -1,3 +1,6 @@
+allowBuilds:
+  esbuild: true
+  msgpackr-extract: true
 ignoredBuiltDependencies:
   - esbuild
   - msgpackr-extract
