@@ -213,7 +213,7 @@ export async function createBlog(req: Request, res: Response): Promise<void> {
         content,
         tags: tags || [],
         image: image || null,
-        authorId: user.id,
+        authorId: Number(user.id),
         orderId,
       })
       .returning({

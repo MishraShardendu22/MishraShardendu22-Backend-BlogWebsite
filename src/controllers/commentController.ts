@@ -94,11 +94,13 @@ export async function createComment(req: Request, res: Response): Promise<void> 
     }
 
     // Run user verification check and blog check concurrently for better performance
+    const userId = typeof user.id === 'string' ? parseInt(user.id) : user.id
+
     const [[userRecord], blog] = await Promise.all([
       db
         .select({ isVerified: usersTable.isVerified })
         .from(usersTable)
-        .where(eq(usersTable.id, user.id))
+        .where(eq(usersTable.id, userId))
         .limit(1),
       db.select().from(blogTable).where(eq(blogTable.id, blogId)).limit(1)
     ])
@@ -120,7 +122,7 @@ export async function createComment(req: Request, res: Response): Promise<void> 
       .insert(commentsTable)
       .values({
         content,
-        userId: user.id,
+        userId: typeof user.id === 'string' ? parseInt(user.id) : user.id,
         blogId,
       })
       .returning({
@@ -134,7 +136,7 @@ export async function createComment(req: Request, res: Response): Promise<void> 
     const [userInfo] = await db
       .select({ id: usersTable.id, name: usersTable.name, email: usersTable.email, profileImage: usersTable.profileImage })
       .from(usersTable)
-      .where(eq(usersTable.id, user.id))
+      .where(eq(usersTable.id, userId))
       .limit(1)
 
     res.status(201).json({
