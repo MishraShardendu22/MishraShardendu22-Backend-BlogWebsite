@@ -1,10 +1,10 @@
 interface EmailTemplateProps {
-  to_name: string
-  otp: string
+	to_name: string;
+	otp: string;
 }
 
 export const EmailTemplate = ({ to_name, otp }: EmailTemplateProps): string => {
-  return `
+	return `
     <div style="font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(135deg, #e0f7fa, #b2ebf2); padding: 50px 20px;">
       <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 40px; border-radius: 16px; box-shadow: 0 12px 40px rgba(79, 70, 229, 0.1);">
         <!-- Greeting Section -->
@@ -27,7 +27,7 @@ export const EmailTemplate = ({ to_name, otp }: EmailTemplateProps): string => {
 
         <!-- Security Reminder -->
         <p style="font-size: 14px; color: #6b7280; line-height: 1.6; text-align: center; padding: 16px; background-color: #f5f3ff; border-radius: 8px; margin: 24px 0; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);">
-          For your security, this OTP will expire in ${process.env.OTP_EXPIRY_MINUTES || '10'} minutes. Please verify your account as soon as possible.
+          For your security, this OTP will expire in ${process.env.OTP_EXPIRY_MINUTES || "10"} minutes. Please verify your account as soon as possible.
         </p>
 
         <!-- Divider -->
@@ -51,5 +51,5 @@ export const EmailTemplate = ({ to_name, otp }: EmailTemplateProps): string => {
         </div>
       </div>
     </div>
-  `
-}
+  `;
+};
