@@ -45,7 +45,7 @@ export const sendOTPEmail = async ({
 					JSON.stringify(errAny.response.body, null, 2),
 				);
 			}
-		} catch (e) {
+		} catch (_e) {
 			// ignore
 		}
 		console.error("[EMAIL] Error sending email via SendGrid:", error);

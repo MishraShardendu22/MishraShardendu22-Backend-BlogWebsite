@@ -3,7 +3,7 @@ import { eq, lt } from "drizzle-orm";
 import { db } from "../config/database.js";
 import { otpVerification } from "../models/authSchema.js";
 
-const OTP_EXPIRY_MINUTES = parseInt(process.env.OTP_EXPIRY_MINUTES || "10");
+const OTP_EXPIRY_MINUTES = parseInt(process.env.OTP_EXPIRY_MINUTES || "10", 10);
 
 /**
  * Generate a 6-digit OTP

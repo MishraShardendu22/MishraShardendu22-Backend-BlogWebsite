@@ -187,7 +187,7 @@ router.get("/me", async (req: Request, res: Response) => {
 	try {
 		const authHeader = req.headers.authorization;
 
-		if (!authHeader || !authHeader.startsWith("Bearer ")) {
+		if (!authHeader?.startsWith("Bearer ")) {
 			res.status(401).json({ success: false, error: "No token provided" });
 			return;
 		}

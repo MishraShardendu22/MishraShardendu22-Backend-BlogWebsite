@@ -21,7 +21,7 @@ export async function reorderBlogs(req: Request, res: Response): Promise<void> {
 
 		// Validate all IDs first before executing any updates
 		for (const { id, blogId_New } of data) {
-			if (isNaN(id) || isNaN(blogId_New)) {
+			if (Number.isNaN(id) || Number.isNaN(blogId_New)) {
 				res.status(400).json({ success: false, error: "Invalid blog IDs" });
 				return;
 			}

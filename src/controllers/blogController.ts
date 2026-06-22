@@ -11,8 +11,8 @@ import { cache } from "../utils/cache.js";
 
 export async function getAllBlogs(req: Request, res: Response): Promise<void> {
 	try {
-		const page = parseInt(req.query.page as string) || 1;
-		const limit = parseInt(req.query.limit as string) || 10;
+		const page = parseInt(req.query.page as string, 10) || 1;
+		const limit = parseInt(req.query.limit as string, 10) || 10;
 		const tag = req.query.tag as string;
 		const author = req.query.author as string;
 		const search = req.query.search as string;
@@ -41,8 +41,8 @@ export async function getAllBlogs(req: Request, res: Response): Promise<void> {
 			);
 		}
 		if (author) {
-			const authorId = parseInt(author);
-			if (!isNaN(authorId)) {
+			const authorId = parseInt(author, 10);
+			if (!Number.isNaN(authorId)) {
 				conditions.push(eq(blogTable.authorId, authorId));
 			}
 		}
@@ -115,8 +115,8 @@ export async function getAllBlogs(req: Request, res: Response): Promise<void> {
 export async function getBlogById(req: Request, res: Response): Promise<void> {
 	try {
 		const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-		const blogId = parseInt(id);
-		if (isNaN(blogId)) {
+		const blogId = parseInt(id, 10);
+		if (Number.isNaN(blogId)) {
 			res.status(400).json({ success: false, error: "Invalid blog ID" });
 			return;
 		}
@@ -216,7 +216,7 @@ export async function createBlog(req: Request, res: Response): Promise<void> {
 		try {
 			// eslint-disable-next-line no-new
 			new URL(image);
-		} catch (err) {
+		} catch (_err) {
 			res.status(400).json({ success: false, error: "Invalid image URL" });
 			return;
 		}
@@ -267,9 +267,9 @@ export async function createBlog(req: Request, res: Response): Promise<void> {
 export async function updateBlog(req: Request, res: Response): Promise<void> {
 	try {
 		const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-		const blogId = parseInt(id);
+		const blogId = parseInt(id, 10);
 		const { title, content, tags, image } = req.body;
-		if (isNaN(blogId)) {
+		if (Number.isNaN(blogId)) {
 			res.status(400).json({ success: false, error: "Invalid blog ID" });
 			return;
 		}
@@ -287,7 +287,7 @@ export async function updateBlog(req: Request, res: Response): Promise<void> {
 			try {
 				// eslint-disable-next-line no-new
 				new URL(image);
-			} catch (err) {
+			} catch (_err) {
 				res.status(400).json({ success: false, error: "Invalid image URL" });
 				return;
 			}
@@ -335,8 +335,8 @@ export async function updateBlog(req: Request, res: Response): Promise<void> {
 export async function deleteBlog(req: Request, res: Response): Promise<void> {
 	try {
 		const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-		const blogId = parseInt(id);
-		if (isNaN(blogId)) {
+		const blogId = parseInt(id, 10);
+		if (Number.isNaN(blogId)) {
 			res.status(400).json({ success: false, error: "Invalid blog ID" });
 			return;
 		}

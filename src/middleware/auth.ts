@@ -25,7 +25,7 @@ declare global {
 
 function getTokenFromHeader(req: Request): string | null {
 	const authHeader = req.headers.authorization;
-	if (!authHeader || !authHeader.startsWith("Bearer ")) {
+	if (!authHeader?.startsWith("Bearer ")) {
 		return null;
 	}
 	return authHeader.substring(7);

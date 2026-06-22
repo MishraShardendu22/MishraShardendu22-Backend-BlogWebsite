@@ -2,7 +2,7 @@ import sgMail from "@sendgrid/mail";
 import { Worker } from "bullmq";
 
 // Parse Upstash Redis URL and create proper connection options
-const upstashHost = process.env.UPSTASH_REDIS_REST_URL!.replace("https://", "");
+const upstashHost = process.env.UPSTASH_REDIS_REST_URL?.replace("https://", "");
 const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN!;
 
 console.log("[WORKER] Connecting to Redis host:", upstashHost);

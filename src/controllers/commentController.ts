@@ -15,11 +15,11 @@ export async function getCommentsByBlogId(
 ): Promise<void> {
 	try {
 		const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-		const blogId = parseInt(id);
-		const page = parseInt(req.query.page as string) || 1;
-		const limit = parseInt(req.query.limit as string) || 10;
+		const blogId = parseInt(id, 10);
+		const page = parseInt(req.query.page as string, 10) || 1;
+		const limit = parseInt(req.query.limit as string, 10) || 10;
 		const offset = (page - 1) * limit;
-		if (isNaN(blogId)) {
+		if (Number.isNaN(blogId)) {
 			res.status(400).json({ success: false, error: "Invalid blog ID" });
 			return;
 		}
@@ -94,10 +94,10 @@ export async function createComment(
 ): Promise<void> {
 	try {
 		const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-		const blogId = parseInt(id);
+		const blogId = parseInt(id, 10);
 		const { content } = req.body;
 		const user = req.user!;
-		if (isNaN(blogId)) {
+		if (Number.isNaN(blogId)) {
 			res.status(400).json({ success: false, error: "Invalid blog ID" });
 			return;
 		}
@@ -107,7 +107,8 @@ export async function createComment(
 		}
 
 		// Run user verification check and blog check concurrently for better performance
-		const userId = typeof user.id === "string" ? parseInt(user.id) : user.id;
+		const userId =
+			typeof user.id === "string" ? parseInt(user.id, 10) : user.id;
 
 		const [[userRecord], blog] = await Promise.all([
 			db
@@ -118,7 +119,7 @@ export async function createComment(
 			db.select().from(blogTable).where(eq(blogTable.id, blogId)).limit(1),
 		]);
 
-		if (!userRecord || !userRecord.isVerified) {
+		if (!userRecord?.isVerified) {
 			res.status(403).json({
 				success: false,
 				error: "Please verify your email to post comments",
@@ -135,7 +136,7 @@ export async function createComment(
 			.insert(commentsTable)
 			.values({
 				content,
-				userId: typeof user.id === "string" ? parseInt(user.id) : user.id,
+				userId: typeof user.id === "string" ? parseInt(user.id, 10) : user.id,
 				blogId,
 			})
 			.returning({
@@ -187,10 +188,10 @@ export async function deleteComment(
 		const commentIdParam = Array.isArray(req.params.commentId)
 			? req.params.commentId[0]
 			: req.params.commentId;
-		const blogId = parseInt(id);
-		const commentId = parseInt(commentIdParam);
+		const blogId = parseInt(id, 10);
+		const commentId = parseInt(commentIdParam, 10);
 		const user = req.user!;
-		if (isNaN(blogId) || isNaN(commentId)) {
+		if (Number.isNaN(blogId) || Number.isNaN(commentId)) {
 			res
 				.status(400)
 				.json({ success: false, error: "Invalid blog ID or comment ID" });
