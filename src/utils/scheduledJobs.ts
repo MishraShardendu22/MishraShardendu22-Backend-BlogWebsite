@@ -26,7 +26,9 @@ export async function cleanupExpiredData(): Promise<void> {
 			console.log(
 				`[CLEANUP] Removed ${unverifiedUsers.length} unverified users:`,
 			);
-			unverifiedUsers.forEach((user) => console.log(`  - ${user.email}`));
+			unverifiedUsers.forEach((user) => {
+				console.log(`  - ${user.email}`);
+			});
 		}
 
 		console.log("[CLEANUP] Cleanup job completed");

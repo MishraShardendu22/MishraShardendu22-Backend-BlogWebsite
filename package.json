@@ -1,61 +1,62 @@
 {
-  "name": "mishrashardendu22-blog-backend",
-  "version": "1.1.0",
-  "type": "module",
-  "description": "Express backend API for MishraShardendu22 Blog with OTP verification",
-  "main": "dist/index.js",
-  "engines": {
-    "node": ">=22.13.0"
-  },
-  "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "test": "vitest run",
-    "db:generate": "drizzle-kit generate",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
-    "db:migrate": "drizzle-kit migrate",
-    "validate": "pnpm exec biome check . && pnpm test && pnpm build",
-    "prepare": "husky"
-  },
-  "keywords": [
-    "blog",
-    "express",
-    "typescript",
-    "drizzle",
-    "better-auth"
-  ],
-  "author": "Shardendu Mishra <mishrashardendu22@gmail.com>",
-  "license": "MIT",
-  "dependencies": {
-    "@neondatabase/serverless": "^1.1.0",
-    "@sendgrid/mail": "^8.1.6",
-    "@upstash/redis": "^1.38.0",
-    "bcryptjs": "^3.0.3",
-    "bullmq": "^5.79.0",
-    "compression": "^1.8.1",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "drizzle-orm": "^0.45.2",
-    "express": "^5.2.1",
-    "express-rate-limit": "^8.5.2",
-    "helmet": "^8.2.0",
-    "jsonwebtoken": "^9.0.3"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.5.0",
-    "@types/compression": "^1.8.1",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^26.0.0",
-    "@types/supertest": "^6.0.2",
-    "drizzle-kit": "^0.31.10",
-    "husky": "^9.1.7",
-    "supertest": "^7.0.0",
-    "tsx": "^4.22.4",
-    "typescript": "^6.0.3",
-    "vitest": "^4.1.9"
-  }
+	"name": "mishrashardendu22-blog-backend",
+	"version": "1.1.0",
+	"type": "module",
+	"description": "Express backend API for MishraShardendu22 Blog with OTP verification",
+	"main": "dist/index.js",
+	"engines": {
+		"node": ">=22.13.0"
+	},
+	"packageManager": "pnpm@10.28.2",
+	"scripts": {
+		"dev": "tsx watch src/index.ts",
+		"build": "tsc",
+		"start": "node dist/index.js",
+		"test": "vitest run",
+		"db:generate": "drizzle-kit generate",
+		"db:push": "drizzle-kit push",
+		"db:studio": "drizzle-kit studio",
+		"db:migrate": "drizzle-kit migrate",
+		"validate": "pnpm exec biome check . && pnpm test && pnpm build",
+		"prepare": "husky"
+	},
+	"keywords": [
+		"blog",
+		"express",
+		"typescript",
+		"drizzle",
+		"better-auth"
+	],
+	"author": "Shardendu Mishra <mishrashardendu22@gmail.com>",
+	"license": "MIT",
+	"dependencies": {
+		"@neondatabase/serverless": "^1.1.0",
+		"@sendgrid/mail": "^8.1.6",
+		"@upstash/redis": "^1.38.0",
+		"bcryptjs": "^3.0.3",
+		"bullmq": "^5.79.0",
+		"compression": "^1.8.1",
+		"cors": "^2.8.6",
+		"dotenv": "^17.4.2",
+		"drizzle-orm": "^0.45.2",
+		"express": "^5.2.1",
+		"express-rate-limit": "^8.5.2",
+		"helmet": "^8.2.0",
+		"jsonwebtoken": "^9.0.3"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.5.0",
+		"@types/compression": "^1.8.1",
+		"@types/cors": "^2.8.19",
+		"@types/express": "^5.0.6",
+		"@types/jsonwebtoken": "^9.0.10",
+		"@types/node": "^26.0.0",
+		"@types/supertest": "^6.0.2",
+		"drizzle-kit": "^0.31.10",
+		"husky": "^9.1.7",
+		"supertest": "^7.0.0",
+		"tsx": "^4.22.4",
+		"typescript": "^6.0.3",
+		"vitest": "^4.1.9"
+	}
 }

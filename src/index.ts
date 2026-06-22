@@ -115,8 +115,8 @@ import { Redis } from "@upstash/redis";
 
 app.get("/redis-test", async (_req: Request, res: Response) => {
 	const redis = new Redis({
-		url: process.env.UPSTASH_REDIS_REST_URL!,
-		token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+		url: process.env.UPSTASH_REDIS_REST_URL || "",
+		token: process.env.UPSTASH_REDIS_REST_TOKEN || "",
 	});
 
 	await redis.set("foo", "bar");

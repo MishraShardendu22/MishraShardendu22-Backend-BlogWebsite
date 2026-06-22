@@ -1,34 +1,34 @@
 import { relations } from "drizzle-orm/relations";
-import { users, blog, comments, userProfiles } from "./schema";
+import { blog, comments, userProfiles, users } from "./schema";
 
-export const blogRelations = relations(blog, ({one, many}) => ({
+export const blogRelations = relations(blog, ({ one, many }) => ({
 	user: one(users, {
 		fields: [blog.authorId],
-		references: [users.id]
+		references: [users.id],
 	}),
 	comments: many(comments),
 }));
 
-export const usersRelations = relations(users, ({many}) => ({
+export const usersRelations = relations(users, ({ many }) => ({
 	blogs: many(blog),
 	comments: many(comments),
 	userProfiles: many(userProfiles),
 }));
 
-export const commentsRelations = relations(comments, ({one}) => ({
+export const commentsRelations = relations(comments, ({ one }) => ({
 	user: one(users, {
 		fields: [comments.userId],
-		references: [users.id]
+		references: [users.id],
 	}),
 	blog: one(blog, {
 		fields: [comments.blogId],
-		references: [blog.id]
+		references: [blog.id],
 	}),
 }));
 
-export const userProfilesRelations = relations(userProfiles, ({one}) => ({
+export const userProfilesRelations = relations(userProfiles, ({ one }) => ({
 	user: one(users, {
 		fields: [userProfiles.userId],
-		references: [users.id]
+		references: [users.id],
 	}),
 }));

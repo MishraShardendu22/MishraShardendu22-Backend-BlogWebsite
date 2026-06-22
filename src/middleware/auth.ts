@@ -5,7 +5,7 @@ import { verifyToken } from "../config/auth.js";
 import { db } from "../config/database.js";
 import { users } from "../models/authSchema.js";
 
-const OWNER_EMAIL = process.env.OWNER_EMAIL!;
+const OWNER_EMAIL = process.env.OWNER_EMAIL || "";
 const PORTFOLIO_JWT_SECRET = process.env.PORTFOLIO_JWT_SECRET;
 
 export interface AuthenticatedUser {

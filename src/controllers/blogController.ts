@@ -197,7 +197,11 @@ export async function getBlogById(req: Request, res: Response): Promise<void> {
 export async function createBlog(req: Request, res: Response): Promise<void> {
 	try {
 		const { title, content, tags, image } = req.body;
-		const user = req.user!;
+		const user = req.user;
+		if (!user) {
+			res.status(401).json({ success: false, error: "Unauthorized" });
+			return;
+		}
 		if (!title || !content) {
 			res
 				.status(400)

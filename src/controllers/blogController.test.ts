@@ -168,6 +168,12 @@ describe("blogController", () => {
 	describe("createBlog", () => {
 		it("should return 400 if title or content is missing", async () => {
 			mockRequest.body = { title: "Title only" };
+			mockRequest.user = {
+				id: 1,
+				email: "owner@example.com",
+				name: "Owner",
+				isOwner: true,
+			};
 
 			await createBlog(mockRequest as Request, mockResponse as Response);
 
@@ -179,6 +185,12 @@ describe("blogController", () => {
 				title: "Title",
 				content: "Content",
 				image: "invalid-url",
+			};
+			mockRequest.user = {
+				id: 1,
+				email: "owner@example.com",
+				name: "Owner",
+				isOwner: true,
 			};
 
 			await createBlog(mockRequest as Request, mockResponse as Response);

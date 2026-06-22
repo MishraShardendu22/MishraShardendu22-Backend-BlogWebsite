@@ -663,7 +663,13 @@
 						"url": {
 							"raw": "{{BASE_URL}}/api/blogs/{{BLOG_ID}}/comments/{{COMMENT_ID}}",
 							"host": ["{{BASE_URL}}"],
-							"path": ["api", "blogs", "{{BLOG_ID}}", "comments", "{{COMMENT_ID}}"]
+							"path": [
+								"api",
+								"blogs",
+								"{{BLOG_ID}}",
+								"comments",
+								"{{COMMENT_ID}}"
+							]
 						},
 						"description": "Delete a comment (requires authentication - can only delete own comments or owner can delete any)"
 					},

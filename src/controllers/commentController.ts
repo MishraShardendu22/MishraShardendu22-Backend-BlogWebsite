@@ -96,7 +96,11 @@ export async function createComment(
 		const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 		const blogId = parseInt(id, 10);
 		const { content } = req.body;
-		const user = req.user!;
+		const user = req.user;
+		if (!user) {
+			res.status(401).json({ success: false, error: "Unauthorized" });
+			return;
+		}
 		if (Number.isNaN(blogId)) {
 			res.status(400).json({ success: false, error: "Invalid blog ID" });
 			return;
@@ -190,7 +194,11 @@ export async function deleteComment(
 			: req.params.commentId;
 		const blogId = parseInt(id, 10);
 		const commentId = parseInt(commentIdParam, 10);
-		const user = req.user!;
+		const user = req.user;
+		if (!user) {
+			res.status(401).json({ success: false, error: "Unauthorized" });
+			return;
+		}
 		if (Number.isNaN(blogId) || Number.isNaN(commentId)) {
 			res
 				.status(400)

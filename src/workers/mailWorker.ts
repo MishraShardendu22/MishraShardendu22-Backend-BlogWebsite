@@ -3,7 +3,7 @@ import { Worker } from "bullmq";
 
 // Parse Upstash Redis URL and create proper connection options
 const upstashHost = process.env.UPSTASH_REDIS_REST_URL?.replace("https://", "");
-const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN!;
+const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN || "";
 
 console.log("[WORKER] Connecting to Redis host:", upstashHost);
 
@@ -29,8 +29,15 @@ if (SENDGRID_KEY) {
 }
 
 // Fallback transporter (simulated) to avoid breaking in dev
+interface MailOptions {
+	from?: string;
+	to: string;
+	subject?: string;
+	html?: string;
+}
+
 const transporter = {
-	sendMail: async (mailOptions: any) => {
+	sendMail: async (mailOptions: MailOptions) => {
 		console.log(
 			"[WORKER] Fallback transporter - logging mailOptions:",
 			mailOptions,
@@ -53,7 +60,13 @@ export const mailWorker = new Worker(
 
 		try {
 			if (SENDGRID_KEY) {
-				const msg: any = {
+				const msg: {
+					to: string;
+					from: string;
+					subject: string;
+					html: string;
+					text?: string;
+				} = {
 					to: to,
 					from: from || process.env.MAIL_ID || "no-reply@example.com",
 					subject: subject || "Notification",

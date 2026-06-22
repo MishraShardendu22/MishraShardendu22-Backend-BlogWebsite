@@ -38,7 +38,7 @@ export const sendOTPEmail = async ({
 	} catch (error) {
 		// Log detailed SendGrid response when available to aid debugging (403 Forbidden)
 		try {
-			const errAny: any = error;
+			const errAny = error as { response?: { body?: unknown } };
 			if (errAny?.response?.body) {
 				console.error(
 					"[EMAIL] SendGrid response body:",
